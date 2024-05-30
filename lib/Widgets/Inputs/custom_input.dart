@@ -13,7 +13,7 @@ class CustomTextField extends StatefulWidget {
     super.key,
     this.onChanged,
     this.keyboardType,
-    required this.validator,
+    this.validator,
     required this.password,
     required this.hintText,
     this.icon,

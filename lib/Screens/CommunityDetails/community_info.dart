@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
+import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 
@@ -83,18 +84,26 @@ class CommunityInfo extends StatelessWidget {
                     },
                   ),
                 ),
-                CustomButton(
-                  color: Theme.of(context).colorScheme.secondary,
-                  radius: 12,
-                  height: getProportionateScreenHeight(40),
-                  label: Text(
-                    'Join',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                !community.users.contains(state.user)
+                    ? CustomButton(
+                        onTap: () {
+                          context.read<HomeCubit>().joinCommunity(community);
+                          successSnackBar(context,
+                              'You are now a part of this community !');
+                        },
+                        color: Theme.of(context).colorScheme.secondary,
+                        radius: 12,
+                        height: getProportionateScreenHeight(40),
+                        label: Text(
+                          'Join',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
-                  ),
-                )
+                      )
+                    : Container(),
               ],
             ),
           );

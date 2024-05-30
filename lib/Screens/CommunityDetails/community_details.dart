@@ -113,18 +113,17 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               child: CustomTextField(
                 icon: InkWell(
                     onTap: () {
-                      context
-                          .read<HomeCubit>()
-                          .createPost(widget.community, postController.text);
-                      postController.clear();
+                      if (postController.text.isNotEmpty) {
+                        context
+                            .read<HomeCubit>()
+                            .createPost(widget.community, postController.text);
+                        postController.clear();
+                      }
                     },
                     child: Image.asset('Img/send.png', height: 20)),
                 controller: postController,
                 hintText: 'Speak your mind',
                 password: false,
-                validator: (p0) {
-                  return null;
-                },
               ),
             )
           ],

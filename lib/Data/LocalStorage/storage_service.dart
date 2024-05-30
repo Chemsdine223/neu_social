@@ -8,59 +8,59 @@ import 'package:neu_social/Data/Models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
+  Future<List<Community>> addPostToCommunity(
+      Community community, Post newPost) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = prefs.getStringList('communityListKey');
 
+    List<Community> communityList = [];
+    if (jsonList != null) {
+      communityList =
+          jsonList.map((community) => Community.fromJson(community)).toList();
+    }
 
-  Future<List<Community>> addPostToCommunity(Community community, Post newPost) async {
-  final prefs = await SharedPreferences.getInstance();
-  final List<String>? jsonList = prefs.getStringList('communityListKey');
+    communityList = communityList.map((c) {
+      if (c.id == community.id) {
+        return c.copyWith(posts: [newPost, ...c.posts]);
+      }
+      return c;
+    }).toList();
 
-  List<Community> communityList = [];
-  if (jsonList != null) {
-    communityList = jsonList.map((community) => Community.fromJson(community)).toList();
+    // Serialize the updated community list and save it back to SharedPreferences
+    final List<String> updatedJsonList =
+        communityList.map((community) => community.toJson()).toList();
+    await prefs.setStringList('communityListKey', updatedJsonList);
+
+    // Return the updated community list
+    return communityList;
   }
 
-  communityList = communityList.map((c) {
-    if (c.id == community.id) {
-      return c.copyWith(posts: [newPost, ...c.posts]);
+  Future<List<Community>> joinCommunity(
+      Community community, UserModel user) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = prefs.getStringList('communityListKey');
+
+    List<Community> communityList = [];
+    if (jsonList != null) {
+      communityList =
+          jsonList.map((community) => Community.fromJson(community)).toList();
     }
-    return c;
-  }).toList();
 
-  // Serialize the updated community list and save it back to SharedPreferences
-  final List<String> updatedJsonList = communityList.map((community) => community.toJson()).toList();
-  await prefs.setStringList('communityListKey', updatedJsonList);
+    communityList = communityList.map((c) {
+      if (c.id == community.id) {
+        return c.copyWith(users: [user, ...c.users]);
+      }
+      return c;
+    }).toList();
 
-  // Return the updated community list
-  return communityList;
-}
+    // Serialize the updated community list and save it back to SharedPreferences
+    final List<String> updatedJsonList =
+        communityList.map((community) => community.toJson()).toList();
+    await prefs.setStringList('communityListKey', updatedJsonList);
 
-
-  Future<List<Community>> joinCommunity(Community community, UserModel user) async {
-  final prefs = await SharedPreferences.getInstance();
-  final List<String>? jsonList = prefs.getStringList('communityListKey');
-
-  List<Community> communityList = [];
-  if (jsonList != null) {
-    communityList = jsonList.map((community) => Community.fromJson(community)).toList();
+    // Return the updated community list
+    return communityList;
   }
-
-  communityList = communityList.map((c) {
-    if (c.id == community.id) {
-      return c.copyWith(users: [user, ...c.users]);
-    }
-    return c;
-  }).toList();
-
-  // Serialize the updated community list and save it back to SharedPreferences
-  final List<String> updatedJsonList = communityList.map((community) => community.toJson()).toList();
-  await prefs.setStringList('communityListKey', updatedJsonList);
-
-  // Return the updated community list
-  return communityList;
-}
-
-
-
 
   Future<List<Community>> addCommunity(Community newCommunity) async {
     final prefs = await SharedPreferences.getInstance();
@@ -141,5 +141,11 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setStringList('interests', interests);
+  }
+
+  Future<void> clearStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    await setDefaultCommunity();
   }
 }

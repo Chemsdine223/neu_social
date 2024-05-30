@@ -12,7 +12,7 @@ errorSnackBar(BuildContext context, String text) {
 successSnackBar(BuildContext context, String text) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.error,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         content: Text(text)));
   }
 }
