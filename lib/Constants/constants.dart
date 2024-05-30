@@ -1,4 +1,4 @@
- 
+import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 
 List<String> interests = [
   'Reading',
@@ -23,3 +23,6 @@ List<String> interests = [
   'Yoga'
 ];
 
+List<String> types = ["Private", "Event-based", "Invitation-based", "Paid"];
+
+// final homeCubit = HomeCubit();

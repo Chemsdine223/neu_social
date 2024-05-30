@@ -36,4 +36,23 @@ class UserModel {
 
   factory UserModel.fromJson(String source) =>
       UserModel.fromMap(json.decode(source));
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserModel &&
+        other.firstname == firstname &&
+        other.lastname == lastname &&
+        other.dob == dob &&
+        other.email == email;
+  }
+
+  @override
+  int get hashCode {
+    return firstname.hashCode ^
+        lastname.hashCode ^
+        dob.hashCode ^
+        email.hashCode;
+  }
 }

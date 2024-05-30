@@ -1,7 +1,12 @@
-import 'package:bloc/bloc.dart';
+import 'dart:math';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Data/LocalStorage/storage_service.dart';
 import 'package:neu_social/Data/Models/community.dart';
+import 'package:neu_social/Data/Models/post.dart';
+import 'package:neu_social/Data/Models/user.dart';
+import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 
 part 'home_state.dart';
 
@@ -10,26 +15,80 @@ class HomeCubit extends Cubit<HomeState> {
     getHomeData();
   }
 
-  getHomeData() async {
+  createPost(Community community, String postContent) async {
+    final user = await StorageService().getUser();
+
+    final post = Post(user: user, post: postContent);
+
+    final communities =
+        await StorageService().addPostToCommunity(community, post);
     final interests = await StorageService().getInterests();
 
-    final dummyCommunities = await StorageService().getDefaultCommunities();
-
-    List<Community> communities = dummyCommunities.where((community) {
-      return community.type.any((type) => interests.contains(type));
+    List<Community> filteredCommunities = communities.where((community) {
+      return community.interests.any((type) => interests.contains(type));
     }).toList();
 
-    emit(HomeLoaded(communities: communities));
+    emit(HomeLoaded(communities: filteredCommunities, user: user));
   }
 
-  createCommunity(Community community) async {
+  joinCommunity(Community community) async {
+    final user = await StorageService().getUser();
+
+    final communities = await StorageService().joinCommunity(community, user);
+    final interests = await StorageService().getInterests();
+
+    List<Community> filteredCommunities = communities.where((community) {
+      return community.interests.any((type) => interests.contains(type));
+    }).toList();
+
+    emit(HomeLoaded(communities: filteredCommunities, user: user));
+  }
+
+  getHomeData() async {
+    emit(HomeLoading());
+    await Future.delayed(const Duration(seconds: 1));
+    final user = await StorageService().getUser();
+    final interests = await StorageService().getInterests();
+    final dummyCommunities = await StorageService().getDefaultCommunities();
+    List<Community> communities = dummyCommunities.where((community) {
+      return community.interests.any((type) => interests.contains(type));
+    }).toList();
+    emit(HomeLoaded(communities: communities, user: user));
+  }
+
+  createCommunity(
+    String description,
+    String name,
+    String type,
+    List<String> interestsList,
+    BuildContext context,
+  ) async {
+    emit(CommunityCreationLoading());
+
+    final user = await StorageService().getUser();
+
+    final community = Community(
+        creator: user,
+        id: Random().nextInt(12),
+        interests: interestsList,
+        name: name,
+        type: type,
+        description: description,
+        users: [user],
+        posts: [],
+        image: "");
+
     final updatedCommunities = await StorageService().addCommunity(community);
     final interests = await StorageService().getInterests();
 
     List<Community> filteredCommunities = updatedCommunities.where((community) {
-      return community.type.any((type) => interests.contains(type));
+      return community.interests.any((type) => interests.contains(type));
     }).toList();
+    await Future.delayed(const Duration(seconds: 2));
 
-    emit(HomeLoaded(communities: filteredCommunities));
+    if (context.mounted) {
+      context.read<BottomSheetNavigationCubit>().closeSheet();
+    }
+    emit(HomeLoaded(communities: filteredCommunities, user: user));
   }
 }

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
-  final ValueChanged<String?> onChanged;
+  final ValueChanged<String?>? onChanged;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final bool password;
   final String hintText;
+  final Widget? icon;
   final TextEditingController controller;
 
   const CustomTextField({
     super.key,
-    required this.onChanged,
+    this.onChanged,
     this.keyboardType,
     required this.validator,
     required this.password,
     required this.hintText,
+    this.icon,
     required this.controller,
   });
 
@@ -31,6 +33,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         controller: widget.controller,
         decoration: InputDecoration(
           hintText: widget.hintText,
+          suffix: widget.icon,
         ),
         obscureText: widget.password,
         keyboardType: widget.keyboardType,

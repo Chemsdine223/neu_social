@@ -11,14 +11,18 @@ final class HomeInitial extends HomeState {}
 
 final class HomeLoaded extends HomeState {
   final List<Community> communities;
+  final UserModel user;
 
   const HomeLoaded({
     required this.communities,
+    required this.user,
   });
 
   @override
-  List<Object> get props => [communities];
+  List<Object> get props => [communities, user];
 }
+
+final class CommunityCreationLoading extends HomeState {}
 
 final class HomeLoading extends HomeState {}
 

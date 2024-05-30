@@ -5,6 +5,6 @@ class ColorPalettes {
   final lightPrimaryColor = Colors.black;
   final darksurfaceColor = Colors.grey.shade900;
   final lightsurfaceColor = Colors.grey.shade100;
-  final accentColor = Colors.blue;
+  final accentColor = Colors.green.shade600;
   final blackColor = Colors.black;
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Data/LocalStorage/storage_service.dart';
-import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
-import 'package:neu_social/Logic/navigation_cubit.dart';
+import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
 import 'package:neu_social/Screens/signup.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
@@ -12,7 +11,10 @@ import 'package:neu_social/Utils/size_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await StorageService().setDefaultCommunity();
+  final auth = await StorageService().authenticityCheck();
+  if (!auth) {
+    await StorageService().setDefaultCommunity();
+  }
   runApp(const MyApp());
 }
 
@@ -29,9 +31,6 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => BottomSheetNavigationCubit(),
-        ),
-        BlocProvider(
-          create: (context) => HomeCubit(),
         ),
         BlocProvider(
           create: (context) => ThemeCubit(),

@@ -69,50 +69,60 @@ final List<Post> posts = [
 // Define dummy communities
 List<Community> dummyCommunities = [
   Community(
+    creator: users[2],
+    type: 'paid',
     id: 1,
     image: 'Img/investment.png',
     name: 'Tech Enthusiasts',
-    type: ['Technology', 'Networking'],
+    interests: ['Technology', 'Networking'],
     description:
         'A community for people passionate about the latest in tech, gadgets, and software development.',
     users: [users[0], users[1], users[2], users[3]],
     posts: [posts[0], posts[3], posts[6]],
   ),
   Community(
+    creator: users[3],
+    type: 'event-based',
     id: 2,
     image: 'Img/better-health.png',
     name: 'Health & Wellness',
-    type: ['Health', 'Lifestyle'],
+    interests: ['Health', 'Lifestyle'],
     description:
         'A community focused on health, wellness, and fitness. Share tips, articles, and personal stories.',
     users: [users[4], users[5], users[6], users[7]],
     posts: [posts[1], posts[2], posts[7]],
   ),
   Community(
+    creator: users[6],
+    type: 'invitation-based',
     id: 3,
     image: 'Img/love-song.png',
     name: 'Music Lovers',
-    type: ['Music', 'Entertainment'],
+    interests: ['Music', 'Entertainment'],
     description:
         'Join fellow music enthusiasts to discuss your favorite bands, share playlists, and talk about the latest releases.',
     users: [users[0], users[1], users[5]],
     posts: [posts[1], posts[5]],
   ),
   Community(
+    creator: users[5],
     id: 4,
+    type: 'public',
     image: 'Img/catering.png',
     name: 'Foodies United',
-    type: ['Food', 'Cooking'],
+    interests: ['Food', 'Cooking'],
     description:
         'A place for food lovers to share recipes, cooking tips, and restaurant reviews.',
     users: [users[2], users[3], users[7]],
     posts: [posts[3], posts[7]],
   ),
   Community(
+    creator: users[0],
+    type: 'private',
     id: 5,
     image: 'Img/business-trip.png',
     name: 'Travel Buffs',
-    type: ['Travel', 'Adventure'],
+    interests: ['Travel', 'Adventure'],
     description:
         'Share your travel experiences, photos, and tips. Find travel buddies and plan your next adventure.',
     users: [users[4], users[5], users[6]],
