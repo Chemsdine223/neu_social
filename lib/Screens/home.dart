@@ -8,7 +8,7 @@ import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/CommunityDetails/community_details.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Cards/community_card.dart';
-import 'package:neu_social/Widgets/BottomSheets/creation_sheet.dart';
+import 'package:neu_social/Widgets/BottomSheets/community_creation_sheet.dart';
 import 'package:neu_social/Widgets/Misc/custom_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

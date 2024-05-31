@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/post.dart';
 import 'package:neu_social/Data/Models/user.dart';
 
@@ -15,6 +16,7 @@ class Community {
   final List<UserModel> users;
   final List<Post> posts;
   final String image;
+  final List<EventModel> events;
   Community({
     required this.id,
     required this.name,
@@ -25,6 +27,7 @@ class Community {
     required this.users,
     required this.posts,
     required this.image,
+    required this.events,
   });
 
   Community copyWith({
@@ -37,6 +40,7 @@ class Community {
     List<UserModel>? users,
     List<Post>? posts,
     String? image,
+    List<EventModel>? events,
   }) {
     return Community(
       id: id ?? this.id,
@@ -48,6 +52,7 @@ class Community {
       users: users ?? this.users,
       posts: posts ?? this.posts,
       image: image ?? this.image,
+      events: events ?? this.events,
     );
   }
 
@@ -63,6 +68,7 @@ class Community {
     result.addAll({'users': users.map((x) => x.toMap()).toList()});
     result.addAll({'posts': posts.map((x) => x.toMap()).toList()});
     result.addAll({'image': image});
+    result.addAll({'events': events.map((x) => x.toMap()).toList()});
 
     return result;
   }
@@ -79,6 +85,8 @@ class Community {
           List<UserModel>.from(map['users']?.map((x) => UserModel.fromMap(x))),
       posts: List<Post>.from(map['posts']?.map((x) => Post.fromMap(x))),
       image: map['image'] ?? '',
+      events: List<EventModel>.from(
+          map['events']?.map((x) => EventModel.fromMap(x))),
     );
   }
 
@@ -89,7 +97,7 @@ class Community {
 
   @override
   String toString() {
-    return 'Community(id: $id, name: $name, interests: $interests, type: $type, creator: $creator, description: $description, users: $users, posts: $posts, image: $image)';
+    return 'Community(id: $id, name: $name, interests: $interests, type: $type, creator: $creator, description: $description, users: $users, posts: $posts, image: $image, events: $events)';
   }
 
   @override
@@ -105,7 +113,8 @@ class Community {
         other.description == description &&
         listEquals(other.users, users) &&
         listEquals(other.posts, posts) &&
-        other.image == image;
+        other.image == image &&
+        listEquals(other.events, events);
   }
 
   @override
@@ -118,6 +127,7 @@ class Community {
         description.hashCode ^
         users.hashCode ^
         posts.hashCode ^
-        image.hashCode;
+        image.hashCode ^
+        events.hashCode;
   }
 }

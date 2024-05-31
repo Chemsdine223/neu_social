@@ -7,6 +7,7 @@ import 'package:neu_social/Screens/CommunityDetails/community_events.dart';
 import 'package:neu_social/Screens/CommunityDetails/community_posts.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Screens/CommunityDetails/community_info.dart';
+import 'package:neu_social/Widgets/BottomSheets/event_creation_sheet.dart';
 import 'package:neu_social/Widgets/Buttons/toggle_button.dart';
 import 'package:neu_social/Widgets/Inputs/custom_input.dart';
 
@@ -83,7 +84,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    // color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   // width: getProportionateScreenWidth(160),
@@ -107,28 +108,53 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                 : CommunityEvents(
                     community: widget.community,
                   ),
-            Container(
-              // color: Colors.amber,
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                icon: InkWell(
-                    onTap: () {
-                      if (postController.text.isNotEmpty) {
-                        context
-                            .read<HomeCubit>()
-                            .createPost(widget.community, postController.text);
-                        postController.clear();
-                      }
-                    },
-                    child: Image.asset('Img/send.png', height: 20)),
-                controller: postController,
-                hintText: 'Speak your mind',
-                password: false,
-              ),
-            )
+            posts
+                ? Container(
+                    // color: Colors.amber,
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomTextField(
+                      icon: InkWell(
+                          onTap: () {
+                            if (postController.text.isNotEmpty) {
+                              context.read<HomeCubit>().createPost(
+                                  widget.community, postController.text);
+                              postController.clear();
+                            }
+                          },
+                          child: Image.asset('Img/send.png', height: 20)),
+                      controller: postController,
+                      hintText: 'Speak your mind',
+                      password: false,
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
+      floatingActionButton: !posts && !isSheetShowing
+          ? Builder(builder: (context) {
+              return FloatingActionButton(
+                backgroundColor: Colors.white,
+                // backgroundColor: Theme.of(context).colorScheme.secondary,
+                child: Image.asset(
+                  'Img/calendar.png',
+                  height: getProportionateScreenHeight(26),
+                ),
+                onPressed: () {
+                  setState(() {
+                    isSheetShowing = !isSheetShowing;
+                  });
+                  showBottomSheet(
+                    enableDrag: false,
+                    context: context,
+                    builder: (context) {
+                      return const CreateEventSheet();
+                    },
+                  );
+                },
+              );
+            })
+          : null,
     );
   }
 }

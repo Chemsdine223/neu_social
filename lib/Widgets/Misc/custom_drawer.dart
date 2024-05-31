@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Screens/Profile/profile.dart';
+import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Misc/logout_dialog.dart';
 
@@ -32,6 +33,18 @@ class CustomDrawer extends StatelessWidget {
                   )
                 ],
               ),
+            ),
+          ),
+          ListTile(
+            trailing: BlocBuilder<ThemeCubit, AppTheme>(
+              builder: (context, theme) {
+                return Switch(
+                  value: theme == AppTheme.dark ? true : false,
+                  onChanged: (value) {
+                    context.read<ThemeCubit>().toggleTheme();
+                  },
+                );
+              },
             ),
           ),
           ListTile(

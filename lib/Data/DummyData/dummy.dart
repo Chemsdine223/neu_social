@@ -1,4 +1,5 @@
 import 'package:neu_social/Data/Models/community.dart';
+import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/user.dart';
 import 'package:neu_social/Data/Models/post.dart';
 
@@ -66,9 +67,93 @@ final List<Post> posts = [
   Post(user: users[7], post: 'Amy Brown shares a recipe for a healthy meal.'),
 ];
 
+List<EventModel> dummyEvents = [
+  EventModel(
+    name: 'Tech Expo 2024',
+    date: DateTime(2024, 6, 15),
+    description:
+        'A grand expo showcasing the latest advancements in technology and innovation. Keynotes, workshops, and networking sessions with industry leaders.',
+    creator: users[2],
+    location: 'San Francisco Convention Center',
+  ),
+  EventModel(
+    name: 'Healthy Living Workshop',
+    date: DateTime(2024, 7, 10),
+    description:
+        'A workshop focused on healthy living, featuring yoga sessions, diet plans, and talks from health experts.',
+    creator: users[3],
+    location: 'Community Wellness Center',
+  ),
+  EventModel(
+    name: 'Summer Music Festival',
+    date: DateTime(2024, 8, 5),
+    description:
+        'Join us for a weekend of live music, food trucks, and entertainment. Featuring performances by top bands and artists.',
+    creator: users[6],
+    location: 'City Park Amphitheater',
+  ),
+  EventModel(
+    name: 'Gourmet Cooking Class',
+    date: DateTime(2024, 6, 20),
+    description:
+        'Learn to cook gourmet meals with professional chefs. Hands-on sessions and tasting included.',
+    creator: users[5],
+    location: 'Culinary Arts School',
+  ),
+  EventModel(
+    name: 'Adventure Hiking Trip',
+    date: DateTime(2024, 7, 25),
+    description:
+        'A guided hiking trip through scenic trails. Suitable for all skill levels. Bring your own gear and be prepared for an adventure.',
+    creator: users[0],
+    location: 'Mountain Ridge National Park',
+  ),
+  EventModel(
+    name: 'Investment Strategies Seminar',
+    date: DateTime(2024, 9, 15),
+    description:
+        'An in-depth seminar on modern investment strategies and financial planning. Presented by top financial advisors.',
+    creator: users[2],
+    location: 'Downtown Business Center',
+  ),
+  EventModel(
+    name: 'Wellness Retreat',
+    date: DateTime(2024, 10, 5),
+    description:
+        'A weekend retreat focusing on mental and physical wellness. Includes meditation, fitness classes, and spa treatments.',
+    creator: users[3],
+    location: 'Lakeside Resort',
+  ),
+  EventModel(
+    name: 'Jazz Night',
+    date: DateTime(2024, 11, 10),
+    description:
+        'An evening of smooth jazz performances by local artists. Enjoy great music and fine dining.',
+    creator: users[6],
+    location: 'Jazz Lounge',
+  ),
+  EventModel(
+    name: 'International Food Festival',
+    date: DateTime(2024, 9, 30),
+    description:
+        'A festival celebrating culinary traditions from around the world. Sample dishes from different cultures and enjoy cooking demonstrations.',
+    creator: users[5],
+    location: 'Central Plaza',
+  ),
+  EventModel(
+    name: 'Photography Expedition',
+    date: DateTime(2024, 12, 12),
+    description:
+        'A photography expedition led by professional photographers. Explore picturesque locations and improve your photography skills.',
+    creator: users[0],
+    location: 'Scenic Valley',
+  ),
+];
+
 // Define dummy communities
 List<Community> dummyCommunities = [
   Community(
+    events: [dummyEvents[0], dummyEvents[1]],
     creator: users[2],
     type: 'paid',
     id: 1,
@@ -81,6 +166,7 @@ List<Community> dummyCommunities = [
     posts: [posts[0], posts[3], posts[6]],
   ),
   Community(
+    events: [dummyEvents[2], dummyEvents[3]],
     creator: users[3],
     type: 'event-based',
     id: 2,
@@ -93,6 +179,7 @@ List<Community> dummyCommunities = [
     posts: [posts[1], posts[2], posts[7]],
   ),
   Community(
+    events: [dummyEvents[6], dummyEvents[7]],
     creator: users[6],
     type: 'invitation-based',
     id: 3,
@@ -105,6 +192,7 @@ List<Community> dummyCommunities = [
     posts: [posts[1], posts[5]],
   ),
   Community(
+    events: [dummyEvents[9], dummyEvents[4]],
     creator: users[5],
     id: 4,
     type: 'public',
@@ -117,6 +205,7 @@ List<Community> dummyCommunities = [
     posts: [posts[3], posts[7]],
   ),
   Community(
+    events: [dummyEvents[6], dummyEvents[9]],
     creator: users[0],
     type: 'private',
     id: 5,

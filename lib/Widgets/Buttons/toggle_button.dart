@@ -42,7 +42,7 @@ class _ToggleButtonsWidgetState extends State<ToggleButtonsWidget> {
               decoration: BoxDecoration(
                 color: posts
                     ? Theme.of(context).colorScheme.secondary
-                    : Colors.white,
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -64,7 +64,7 @@ class _ToggleButtonsWidgetState extends State<ToggleButtonsWidget> {
               decoration: BoxDecoration(
                 color: !posts
                     ? Theme.of(context).colorScheme.secondary
-                    : Colors.white,
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(

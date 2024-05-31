@@ -68,6 +68,7 @@ class HomeCubit extends Cubit<HomeState> {
     final user = await StorageService().getUser();
 
     final community = Community(
+        events: [],
         creator: user,
         id: Random().nextInt(12),
         interests: interestsList,
