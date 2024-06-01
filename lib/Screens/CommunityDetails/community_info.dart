@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
@@ -29,28 +28,57 @@ class CommunityInfo extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height: getProportionateScreenHeight(60),
-                  child: Image.asset(
-                      fit: BoxFit.contain,
-                      community.image == ""
-                          ? "Img/social-media.png"
-                          : community.image),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                          fit: BoxFit.contain,
+                          community.image == ""
+                              ? "Img/social-media.png"
+                              : community.image),
+                    ],
+                  ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(16)),
                 Text(
                   community.description,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
+                SizedBox(height: getProportionateScreenHeight(32)),
+                Text(
+                  'This groups members are interested by: ',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Text(
+                  community.interests
+                      .map((e) => e)
+                      .toList()
+                      .toString()
+                      .replaceAll("[", "")
+                      .replaceAll("]", ""),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context).disabledColor,
+                      ),
+                ),
                 SizedBox(height: getProportionateScreenHeight(16)),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'Img/group-users.png',
-                      height: getProportionateScreenHeight(28),
+                    Column(
+                      children: [
+                        Image.asset(
+                          'Img/group-users.png',
+                          height: getProportionateScreenHeight(28),
+                        ),
+                        const Text('Community members')
+                      ],
                     ),
-                    const Text('Community members')
                   ],
                 ),
                 SizedBox(height: getProportionateScreenHeight(12)),

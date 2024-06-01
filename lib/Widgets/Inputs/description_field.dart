@@ -7,12 +7,14 @@ class DescriptionField extends StatelessWidget {
   final String? Function(String?)? validator;
   final ValueChanged<String?>? onChanged;
   final FocusNode focusNode;
+  final String? hint;
   const DescriptionField({
     super.key,
     required this.descriptionController,
     this.validator,
     this.onChanged,
     required this.focusNode,
+    this.hint,
   });
 
   @override
@@ -29,9 +31,9 @@ class DescriptionField extends StatelessWidget {
         minLines: 1,
         maxLines: 12,
         validator: validator,
-        decoration: const InputDecoration(
-          errorStyle: TextStyle(height: 0),
-          hintText: "Enter your communities description",
+        decoration: InputDecoration(
+          errorStyle: const TextStyle(height: 0),
+          hintText: hint ?? "Enter your communities description",
           border: InputBorder.none,
         ),
         controller: descriptionController,

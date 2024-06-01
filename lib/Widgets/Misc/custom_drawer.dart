@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Screens/Profile/profile.dart';
+import 'package:neu_social/Screens/community_management.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Utils/size_config.dart';
-import 'package:neu_social/Widgets/Misc/logout_dialog.dart';
+import 'package:neu_social/Widgets/Dialogs/logout_dialog.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -49,12 +50,17 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              Navigator.pop(context);
+              
+              final homeCubitt = BlocProvider.of<HomeCubit>(context);
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Profile(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider.value(
+                    value: homeCubitt,
+                    child: const Profile(),
+                  ),
+                ),
+              );
             },
             leading: const Icon(Icons.person),
             title: const Text(
@@ -62,6 +68,18 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            onTap: () {
+              final homeCubitt = BlocProvider.of<HomeCubit>(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider.value(
+                    value: homeCubitt,
+                    child: const ManageCommunities(),
+                  ),
+                ),
+              );
+            },
             leading: Image.asset(
               'Img/group-users.png',
               height: 20,

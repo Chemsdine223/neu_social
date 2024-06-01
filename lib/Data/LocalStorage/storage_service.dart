@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:neu_social/Data/DummyData/dummy.dart';
 import 'package:neu_social/Data/Models/community.dart';
+import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/post.dart';
 
 import 'package:neu_social/Data/Models/user.dart';
@@ -22,6 +23,34 @@ class StorageService {
     communityList = communityList.map((c) {
       if (c.id == community.id) {
         return c.copyWith(posts: [newPost, ...c.posts]);
+      }
+      return c;
+    }).toList();
+
+    // Serialize the updated community list and save it back to SharedPreferences
+    final List<String> updatedJsonList =
+        communityList.map((community) => community.toJson()).toList();
+    await prefs.setStringList('communityListKey', updatedJsonList);
+
+    // Return the updated community list
+    return communityList;
+  }
+
+
+  Future<List<Community>> addEventToCommunity(
+      Community community, EventModel newEvent) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? jsonList = prefs.getStringList('communityListKey');
+
+    List<Community> communityList = [];
+    if (jsonList != null) {
+      communityList =
+          jsonList.map((community) => Community.fromJson(community)).toList();
+    }
+
+    communityList = communityList.map((c) {
+      if (c.id == community.id) {
+        return c.copyWith(events: [newEvent, ...c.events]);
       }
       return c;
     }).toList();
@@ -94,6 +123,8 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? jsonList = prefs.getStringList('communityListKey');
 
+    // log(jsonList.toString());
+
     if (jsonList != null) {
       return jsonList.map((jsonStr) => Community.fromJson(jsonStr)).toList();
     } else {
@@ -133,6 +164,9 @@ class StorageService {
 
   Future<List<String>> getInterests() async {
     final prefs = await SharedPreferences.getInstance();
+
+    final interr = prefs.getStringList('interests') ?? [];
+    log(interr.toString());
 
     return prefs.getStringList('interests') ?? [];
   }

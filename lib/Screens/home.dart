@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Layouts/community_card_skeleton.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
@@ -10,7 +9,6 @@ import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Cards/community_card.dart';
 import 'package:neu_social/Widgets/BottomSheets/community_creation_sheet.dart';
 import 'package:neu_social/Widgets/Misc/custom_drawer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -125,15 +123,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               : false,
                           community: community,
                           onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider.value(
-                                  value: homeCubitt,
-                                  child: CommunityDetails(
-                                    community: community,
-                                  ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BlocProvider.value(
+                                value: homeCubitt,
+                                child: CommunityDetails(
+                                  community: community,
                                 ),
-                              )),
+                              ),
+                            ),
+                          ),
                         );
                       })),
                     );

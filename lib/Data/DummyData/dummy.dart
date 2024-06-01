@@ -1,3 +1,4 @@
+import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/user.dart';
@@ -69,6 +70,7 @@ final List<Post> posts = [
 
 List<EventModel> dummyEvents = [
   EventModel(
+    time: '00:22',
     name: 'Tech Expo 2024',
     date: DateTime(2024, 6, 15),
     description:
@@ -77,6 +79,7 @@ List<EventModel> dummyEvents = [
     location: 'San Francisco Convention Center',
   ),
   EventModel(
+    time: '12:25',
     name: 'Healthy Living Workshop',
     date: DateTime(2024, 7, 10),
     description:
@@ -85,6 +88,7 @@ List<EventModel> dummyEvents = [
     location: 'Community Wellness Center',
   ),
   EventModel(
+    time: '20;30',
     name: 'Summer Music Festival',
     date: DateTime(2024, 8, 5),
     description:
@@ -93,6 +97,7 @@ List<EventModel> dummyEvents = [
     location: 'City Park Amphitheater',
   ),
   EventModel(
+    time: '21:00',
     name: 'Gourmet Cooking Class',
     date: DateTime(2024, 6, 20),
     description:
@@ -101,6 +106,7 @@ List<EventModel> dummyEvents = [
     location: 'Culinary Arts School',
   ),
   EventModel(
+    time: '22;00',
     name: 'Adventure Hiking Trip',
     date: DateTime(2024, 7, 25),
     description:
@@ -109,6 +115,7 @@ List<EventModel> dummyEvents = [
     location: 'Mountain Ridge National Park',
   ),
   EventModel(
+    time: '23:00',
     name: 'Investment Strategies Seminar',
     date: DateTime(2024, 9, 15),
     description:
@@ -117,6 +124,7 @@ List<EventModel> dummyEvents = [
     location: 'Downtown Business Center',
   ),
   EventModel(
+    time: '08:45',
     name: 'Wellness Retreat',
     date: DateTime(2024, 10, 5),
     description:
@@ -125,6 +133,7 @@ List<EventModel> dummyEvents = [
     location: 'Lakeside Resort',
   ),
   EventModel(
+    time: '12:00',
     name: 'Jazz Night',
     date: DateTime(2024, 11, 10),
     description:
@@ -133,6 +142,7 @@ List<EventModel> dummyEvents = [
     location: 'Jazz Lounge',
   ),
   EventModel(
+    time: '15:00',
     name: 'International Food Festival',
     date: DateTime(2024, 9, 30),
     description:
@@ -141,6 +151,7 @@ List<EventModel> dummyEvents = [
     location: 'Central Plaza',
   ),
   EventModel(
+    time: '18:00',
     name: 'Photography Expedition',
     date: DateTime(2024, 12, 12),
     description:
@@ -159,7 +170,7 @@ List<Community> dummyCommunities = [
     id: 1,
     image: 'Img/investment.png',
     name: 'Tech Enthusiasts',
-    interests: ['Technology', 'Networking'],
+    interests: ['Technology', 'Science'],
     description:
         'A community for people passionate about the latest in tech, gadgets, and software development.',
     users: [users[0], users[1], users[2], users[3]],
@@ -185,7 +196,7 @@ List<Community> dummyCommunities = [
     id: 3,
     image: 'Img/love-song.png',
     name: 'Music Lovers',
-    interests: ['Music', 'Entertainment'],
+    interests: ['Music'],
     description:
         'Join fellow music enthusiasts to discuss your favorite bands, share playlists, and talk about the latest releases.',
     users: [users[0], users[1], users[5]],
@@ -211,7 +222,7 @@ List<Community> dummyCommunities = [
     id: 5,
     image: 'Img/business-trip.png',
     name: 'Travel Buffs',
-    interests: ['Travel', 'Adventure'],
+    interests: ['Traveling', 'Adventure'],
     description:
         'Share your travel experiences, photos, and tips. Find travel buddies and plan your next adventure.',
     users: [users[4], users[5], users[6]],

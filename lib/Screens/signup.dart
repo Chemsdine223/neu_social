@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
 import 'package:neu_social/Screens/interests_screen.dart';
+import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 import 'package:neu_social/Widgets/Inputs/custom_input.dart';
@@ -17,13 +18,12 @@ class _SignupState extends State<Signup> {
   final formKey = GlobalKey<FormState>();
   String? birthDateInString;
   // DateTime? birthDate;
-  String? formattedDate;
+  DateTime? dob;
 
   final firstnameController = TextEditingController();
   final lastnameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final dobController = TextEditingController();
 
   @override
   void dispose() {
@@ -140,8 +140,7 @@ class _SignupState extends State<Signup> {
                                       context.read<SignupCubit>().saveUser(
                                           firstnameController.text,
                                           lastnameController.text,
-                                          DateTime.parse(
-                                              formattedDate.toString()),
+                                          dob!,
                                           emailController.text);
                                       Navigator.push(
                                           context,
@@ -152,7 +151,7 @@ class _SignupState extends State<Signup> {
                                     }
                                   },
                                   color: Colors.green.shade800,
-                                  radius: 24,
+                                  radius: 12,
                                   height: getProportionateScreenHeight(45),
                                   label: Text(
                                     'Sign up',
@@ -185,7 +184,8 @@ class _SignupState extends State<Signup> {
 
   TextFormField _dateField(BuildContext context) {
     return TextFormField(
-      controller: dobController,
+      controller:
+          TextEditingController(text: dob != null ? formatDateTime(dob!) : ''),
       readOnly: true,
       validator: (value) {
         if (value!.isEmpty) {
@@ -194,7 +194,7 @@ class _SignupState extends State<Signup> {
         return null;
       },
       decoration: InputDecoration(
-        hintText: 'DD/MM/YYYY',
+        hintText: 'dd-MM-yyyy',
         suffixIcon: GestureDetector(
           child: const Icon(Icons.calendar_today),
           onTap: () async {
@@ -205,10 +205,7 @@ class _SignupState extends State<Signup> {
                 lastDate: DateTime.now());
             if (datePick != null) {
               setState(() {
-                dobController.text =
-                    "${datePick.day}-${datePick.month < 10 ? "0" : ""}${datePick.month}-${datePick.year}";
-                formattedDate =
-                    "${datePick.year}-${datePick.month < 10 ? "0" : ""}${datePick.month}-${datePick.day}";
+                dob = datePick;
               });
             }
           },

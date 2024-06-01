@@ -34,7 +34,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
                   alignment: WrapAlignment.center,
                   spacing: 8.0,
                   runSpacing: 4.0,
-                  children: interests.map((interest) {
+                  children: defaultInterests.map((interest) {
                     final isSelected = selectedInterests.contains(interest);
                     return ChoiceChip(
                       selectedColor: Colors.green,
@@ -57,7 +57,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
                 CustomButton(
                   onTap: () async {
                     await StorageService()
-                        .saveInterests(interests)
+                        .saveInterests(selectedInterests.toList())
                         .then((value) {
                       Navigator.pushReplacement(
                           context,

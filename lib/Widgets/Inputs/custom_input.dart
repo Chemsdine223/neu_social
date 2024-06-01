@@ -4,8 +4,10 @@ class CustomTextField extends StatefulWidget {
   final ValueChanged<String?>? onChanged;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
-  final bool password;
+  final bool? password;
+  final bool? readOnly;
   final String hintText;
+
   final Widget? icon;
   final TextEditingController controller;
 
@@ -14,7 +16,8 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.keyboardType,
     this.validator,
-    required this.password,
+    this.password,
+    this.readOnly,
     required this.hintText,
     this.icon,
     required this.controller,
@@ -28,14 +31,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // color: Colors.white,
       child: TextFormField(
+        readOnly: widget.readOnly ?? false,
         controller: widget.controller,
         decoration: InputDecoration(
           hintText: widget.hintText,
           suffix: widget.icon,
         ),
-        obscureText: widget.password,
+        obscureText: widget.password ?? false,
         keyboardType: widget.keyboardType,
         onChanged: widget.onChanged,
         validator: widget.validator,

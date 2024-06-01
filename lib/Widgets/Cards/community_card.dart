@@ -76,23 +76,34 @@ class CommunityCard extends StatelessWidget {
                   )
                 ],
               ),
-              ReadMoreText(
+              Text(
                 community.interests
                     .map((e) => e)
                     .toList()
                     .toString()
                     .replaceAll("[", "")
                     .replaceAll("]", ""),
-                trimLines: 1,
-                moreStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).disabledColor,
                     ),
-                lessStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).disabledColor,
-                    ),
-                trimMode: TrimMode.Line,
-                textAlign: TextAlign.start,
               ),
+              // ReadMoreText(
+              //   community.interests
+              //       .map((e) => e)
+              //       .toList()
+              //       .toString()
+              //       .replaceAll("[", "")
+              //       .replaceAll("]", ""),
+              //   trimLines: 1,
+              //   moreStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+              //         color: Theme.of(context).disabledColor,
+              //       ),
+              //   lessStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+              //         color: Theme.of(context).disabledColor,
+              //       ),
+              //   trimMode: TrimMode.Line,
+              //   textAlign: TextAlign.start,
+              // ),
               ReadMoreText(
                 preDataText: "",
                 postDataText: "",

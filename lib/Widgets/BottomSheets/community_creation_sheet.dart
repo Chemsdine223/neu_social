@@ -78,7 +78,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                             alignment: WrapAlignment.center,
                             spacing: 8.0,
                             runSpacing: 4.0,
-                            children: interests.map((interest) {
+                            children: defaultInterests.map((interest) {
                               final isSelected =
                                   selectedInterests.contains(interest);
                               return ChoiceChip(

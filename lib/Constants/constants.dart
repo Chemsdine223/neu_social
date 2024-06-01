@@ -1,6 +1,4 @@
-import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
-
-List<String> interests = [
+List<String> defaultInterests = [
   'Reading',
   'Traveling',
   'Cooking',
@@ -11,7 +9,11 @@ List<String> interests = [
   'Technology',
   'Gaming',
   'Fitness',
+  'Health',
   'Art',
+  'Lifestyle',
+  'Food',
+  'Adventure',
   'Gardening',
   'Writing',
   'Fashion',
@@ -23,6 +25,24 @@ List<String> interests = [
   'Yoga'
 ];
 
-List<String> types = ["Private", "Event-based", "Invitation-based", "Paid"];
+List<String> months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
-// final homeCubit = HomeCubit();
+List<String> types = [
+  "Private",
+  "Event-based",
+  "Invitation-based",
+  "Paid",
+];
