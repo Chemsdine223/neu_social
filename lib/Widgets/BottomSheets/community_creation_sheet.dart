@@ -55,7 +55,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height -
                       getProportionateScreenHeight(40),
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   child: SingleChildScrollView(
                     child: Form(
                       key: _formKey,

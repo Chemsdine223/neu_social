@@ -6,17 +6,25 @@ import 'package:neu_social/Data/Models/user.dart';
 
 errorSnackBar(BuildContext context, String text) {
   if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
         backgroundColor: Theme.of(context).colorScheme.error,
-        content: Text(text)));
+        content: Text(text),
+      ),
+    );
   }
 }
 
 successSnackBar(BuildContext context, String text) {
   if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        content: Text(text)));
+        content: Text(
+          text,
+        ),
+      ),
+    );
   }
 }
 

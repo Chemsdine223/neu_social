@@ -18,8 +18,9 @@ class _ManageCommunitiesState extends State<ManageCommunities> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios)),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
         scrolledUnderElevation: 0,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -30,30 +31,36 @@ class _ManageCommunitiesState extends State<ManageCommunities> {
         builder: (context, state) {
           final homeCubitt = BlocProvider.of<HomeCubit>(context);
           if (state is HomeLoaded) {
-            return ListView.builder(
-              itemCount:
-                  findUserCommunities(state.communities, state.user).length,
-              itemBuilder: (context, index) {
-                final communityList =
-                    findUserCommunities(state.communities, state.user);
-                final community = communityList[index];
+            return findUserCommunities(state.communities, state.user).isEmpty
+                ? const Center(
+                    child: Text('You haven\'t created a community yet'))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount:
+                        findUserCommunities(state.communities, state.user)
+                            .length,
+                    itemBuilder: (context, index) {
+                      final communityList =
+                          findUserCommunities(state.communities, state.user);
+                      final community = communityList[index];
 
-                return CommunityCard(
-                  community: community,
-                  clickable: true,
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlocProvider.value(
-                          value: homeCubitt,
-                          child: CommunityDetails(community: community),
-                        ),
-                      )),
-                );
-              },
-            );
+                      return CommunityCard(
+                        community: community,
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BlocProvider.value(
+                                value: homeCubitt,
+                                child: CommunityDetails(
+                                  community: community,
+                                ),
+                              ),
+                            )),
+                      );
+                    },
+                  );
           }
-          return Container();
+          return const Text("You haven't created any communities yet");
         },
       ),
     );

@@ -122,4 +122,19 @@ class HomeCubit extends Cubit<HomeState> {
     }
     emit(HomeLoaded(communities: filteredCommunities, user: user));
   }
+
+    addInterest(String interest) async {
+    await StorageService().addInterest(interest);
+
+    // Get updated data
+    final userInterests = await StorageService().getInterests();
+    final dummyCommunities = await StorageService().getDefaultCommunities();
+
+    final filteredCommunities =
+        filterCommunitiesByInterests(dummyCommunities, userInterests);
+
+    final user = await StorageService().getUser();
+
+    emit(HomeLoaded(communities: filteredCommunities, user: user));
+  }
 }

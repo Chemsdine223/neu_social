@@ -11,8 +11,9 @@ class ThemeClass {
     canvasColor: ColorPalettes().lightsurfaceColor,
     secondaryHeaderColor: Colors.white,
     brightness: Brightness.light,
+    // primaryTextTheme: ,
     useMaterial3: true,
-    textTheme: CustomTypography().textTheme,
+    textTheme: CustomTypography().textThemeLight,
     colorScheme: ColorScheme.light(
       secondary: ColorPalettes().accentColor,
       primary: ColorPalettes().lightPrimaryColor,
@@ -23,7 +24,7 @@ class ThemeClass {
     canvasColor: ColorPalettes().darksurfaceColor,
     primaryColor: ColorPalettes().darkPrimaryColor,
     secondaryHeaderColor: Colors.black,
-    textTheme: CustomTypography().textTheme,
+    textTheme: CustomTypography().textThemeDark,
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: ColorScheme.dark(

@@ -45,4 +45,5 @@ List<String> types = [
   "Event-based",
   "Invitation-based",
   "Paid",
+  "Public",
 ];

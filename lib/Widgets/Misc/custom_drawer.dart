@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Screens/Profile/profile.dart';
+import 'package:neu_social/Screens/add_interests.dart';
 import 'package:neu_social/Screens/community_management.dart';
+import 'package:neu_social/Screens/interests_screen.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Dialogs/logout_dialog.dart';
@@ -36,21 +38,31 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            trailing: BlocBuilder<ThemeCubit, AppTheme>(
-              builder: (context, theme) {
-                return Switch(
-                  value: theme == AppTheme.dark ? true : false,
-                  onChanged: (value) {
-                    context.read<ThemeCubit>().toggleTheme();
+          BlocBuilder<ThemeCubit, AppTheme>(
+            builder: (context, theme) {
+              return ListTile(
+                leading: Image.asset(
+                  theme == AppTheme.light
+                      ? 'Img/light.png'
+                      : 'Img/night-mode.png',
+                  height: getProportionateScreenHeight(26),
+                ),
+                title: Text(theme == AppTheme.light ? 'Light' : 'Dark'),
+                trailing: BlocBuilder<ThemeCubit, AppTheme>(
+                  builder: (context, theme) {
+                    return Switch(
+                      value: theme == AppTheme.dark ? true : false,
+                      onChanged: (value) {
+                        context.read<ThemeCubit>().toggleTheme();
+                      },
+                    );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
           ListTile(
             onTap: () {
-              
               final homeCubitt = BlocProvider.of<HomeCubit>(context);
               Navigator.push(
                 context,
@@ -70,6 +82,7 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
             onTap: () {
               final homeCubitt = BlocProvider.of<HomeCubit>(context);
+              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -83,9 +96,29 @@ class CustomDrawer extends StatelessWidget {
             leading: Image.asset(
               'Img/group-users.png',
               height: 20,
+              color: Theme.of(context).primaryColor,
             ),
             title: const Text(
               'My communities',
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              final homeCubitt = BlocProvider.of<HomeCubit>(context);
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider.value(
+                    value: homeCubitt,
+                    child: const AddInterests(),
+                  ),
+                ),
+              );
+            },
+            leading: const Icon(Icons.add),
+            title: const Text(
+              'Add interests',
             ),
           ),
           const Spacer(),

@@ -36,7 +36,6 @@ class StorageService {
     return communityList;
   }
 
-
   Future<List<Community>> addEventToCommunity(
       Community community, EventModel newEvent) async {
     final prefs = await SharedPreferences.getInstance();
@@ -175,6 +174,36 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setStringList('interests', interests);
+  }
+
+  Future<void> addInterest(String interest) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the current list of interests
+    List<String> currentInterests = prefs.getStringList('interests') ?? [];
+
+    // Add the new interest if it does not already exist
+    if (!currentInterests.contains(interest)) {
+      currentInterests.add(interest);
+    }
+
+    // Save the updated list
+    await prefs.setStringList('interests', currentInterests);
+  }
+
+  Future<void> removeInterest(String interest) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the current list of interests
+    List<String> currentInterests = prefs.getStringList('interests') ?? [];
+
+    // Add the new interest if it does not already exist
+    if (currentInterests.contains(interest)) {
+      currentInterests.remove(interest);
+    }
+
+    // Save the updated list
+    await prefs.setStringList('interests', currentInterests);
   }
 
   Future<void> clearStorage() async {

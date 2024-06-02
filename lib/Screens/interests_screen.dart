@@ -27,7 +27,10 @@ class _InterestsScreenState extends State<InterestsScreen> {
               children: [
                 Text(
                   'Select your interests',
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge!
+                      .copyWith(color: Theme.of(context).primaryColor),
                 ),
                 SizedBox(height: getProportionateScreenHeight(24)),
                 Wrap(

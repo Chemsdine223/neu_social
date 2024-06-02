@@ -14,8 +14,8 @@ class _CommunityCardSkeletonSkeletonState extends State<CommunityCardSkeleton> {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      baseColor: Theme.of(context).canvasColor,
+      highlightColor: Theme.of(context).secondaryHeaderColor,
       enabled: true,
       child: SizedBox(
         child: Container(
@@ -23,7 +23,7 @@ class _CommunityCardSkeletonSkeletonState extends State<CommunityCardSkeleton> {
           width: MediaQuery.of(context).size.width,
           height: getProportionateScreenHeight(140),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(8),
           ),
         ),

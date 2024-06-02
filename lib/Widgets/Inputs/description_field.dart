@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:neu_social/Theme/colors/color_palettes.dart';
-
 class DescriptionField extends StatelessWidget {
   final TextEditingController descriptionController;
   final String? Function(String?)? validator;
@@ -22,7 +20,7 @@ class DescriptionField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: ColorPalettes().lightsurfaceColor,
+        color: Theme.of(context).canvasColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextFormField(

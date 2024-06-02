@@ -37,6 +37,7 @@ class _CommunityEventsState extends State<CommunityEvents> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 2,
                   child: MonthView(
+                    borderColor: Theme.of(context).canvasColor,
                     useAvailableVerticalSpace: true,
                     startDay: WeekDays.monday,
                     pagePhysics: const NeverScrollableScrollPhysics(),
@@ -50,13 +51,21 @@ class _CommunityEventsState extends State<CommunityEvents> {
                         return months[date.month - 1];
                       }
                     },
+                    weekDayBuilder: (day) {
+                      return WeekDayTile(
+                        backgroundColor: Colors.transparent,
+                        dayIndex: day,
+                        displayBorder: false,
+                        textStyle: Theme.of(context).textTheme.bodyLarge,
+                      );
+                    },
                     headerStyle: const HeaderStyle(
                         headerPadding: EdgeInsets.all(12),
                         rightIconVisible: false,
                         leftIconVisible: false,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                        )),
+                            // color: Colors.white,
+                            )),
                     cellBuilder:
                         (date, event, isToday, isInMonth, hideDaysNotInMonth) {
                       final dates = currentCommunity.events
@@ -66,7 +75,7 @@ class _CommunityEventsState extends State<CommunityEvents> {
 
                       if (!isInMonth) {
                         return Container(
-                          color: Colors.white,
+                          color: Colors.transparent,
                         );
                       }
 
@@ -94,17 +103,26 @@ class _CommunityEventsState extends State<CommunityEvents> {
                         );
                       }
                       return dates.contains(date)
-                          ? Align(
-                              alignment: Alignment.bottomRight,
-                              child: CircleAvatar(
-                                radius: 12,
-                                backgroundColor: date.isBefore(DateTime.now())
-                                    ? Theme.of(context).disabledColor
-                                    : null,
-                                child: Text(date.day.toString()),
-                              ),
+                          ? Stack(
+                              children: [
+                                Text(date.day.toString()),
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: CircleAvatar(
+                                    radius: 8,
+                                    backgroundColor:
+                                        date.isBefore(DateTime.now())
+                                            ? Theme.of(context).disabledColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                  ),
+                                ),
+                              ],
                             )
-                          : Text(date.day.toString());
+                          : Container(
+                              color: Colors.transparent,
+                              child: Text(date.day.toString()));
                     },
                     cellAspectRatio: .9,
                   ),

@@ -20,7 +20,7 @@ class CommunityInfo extends StatelessWidget {
         if (state is HomeLoaded) {
           final community = state.communities.where((c) => c.id == id).first;
           return Container(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             padding: EdgeInsets.symmetric(
               horizontal: getProportionateScreenWidth(12),
               vertical: getProportionateScreenHeight(12),
@@ -75,6 +75,7 @@ class CommunityInfo extends StatelessWidget {
                         Image.asset(
                           'Img/group-users.png',
                           height: getProportionateScreenHeight(28),
+                          color: Theme.of(context).primaryColor,
                         ),
                         const Text('Community members')
                       ],
@@ -101,6 +102,7 @@ class CommunityInfo extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
+                            textAlign: TextAlign.center,
                             '${user.firstname} ${user.lastname}',
                             style:
                                 Theme.of(context).textTheme.bodySmall!.copyWith(

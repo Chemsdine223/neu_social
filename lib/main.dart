@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Data/LocalStorage/storage_service.dart';
+import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
 import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ThemeCubit(),
+        ),
+        BlocProvider(
+          create: (context) => LogoutCubit(),
         ),
       ],
       child: BlocBuilder<ThemeCubit, AppTheme>(

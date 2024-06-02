@@ -49,7 +49,7 @@ class _ToggleButtonsWidgetState extends State<ToggleButtonsWidget> {
                 child: Text(
                   'Posts',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: posts ? Colors.white : Colors.black,
+                        // color: posts ? Colors.white : Colors.black,
                         fontWeight: posts ? FontWeight.bold : FontWeight.normal,
                       ),
                 ),
@@ -71,7 +71,7 @@ class _ToggleButtonsWidgetState extends State<ToggleButtonsWidget> {
                 child: Text(
                   'Events',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: !posts ? Colors.white : Colors.black,
+                        // color: !posts ? Colors.white : Colors.black,
                         fontWeight:
                             !posts ? FontWeight.bold : FontWeight.normal,
                       ),

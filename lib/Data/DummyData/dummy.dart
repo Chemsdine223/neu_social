@@ -1,4 +1,3 @@
-import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/user.dart';
@@ -88,7 +87,7 @@ List<EventModel> dummyEvents = [
     location: 'Community Wellness Center',
   ),
   EventModel(
-    time: '20;30',
+    time: '20:30',
     name: 'Summer Music Festival',
     date: DateTime(2024, 8, 5),
     description:

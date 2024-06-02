@@ -5,6 +5,7 @@ import 'package:neu_social/Layouts/community_card_skeleton.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/CommunityDetails/community_details.dart';
+import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Cards/community_card.dart';
 import 'package:neu_social/Widgets/BottomSheets/community_creation_sheet.dart';
@@ -25,8 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         // floatingActionButton: FloatingActionButton(
         //   onPressed: () async {
-        //     final prefs = await SharedPreferences.getInstance();
-        //     prefs.clear();
+        // errorSnackBar(context, 'text');
+        // final prefs = await SharedPreferences.getInstance();
+        // prefs.clear();
         //   },
         // ),
         drawer: const CustomDrawer(),
@@ -44,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, state) {
                   return state == BottomSheetStatus.opened
                       ? Container()
-                      : Image.asset('Img/menu.png');
+                      : Image.asset(
+                          'Img/menu.png',
+                          color: Theme.of(context).primaryColor,
+                        );
                 },
               ));
             }),
@@ -89,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 state == BottomSheetStatus.opened
                     ? 'Create community'
                     : 'Neu social',
-                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Colors.green.shade800,
                     ),
               );
@@ -105,39 +110,53 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state is HomeLoaded) {
               return RefreshIndicator(
                 onRefresh: () => context.read<HomeCubit>().getHomeData(),
-                child: ListView.builder(
-                  itemCount: state.communities.length,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(12),
-                      vertical: getProportionateScreenHeight(12)),
-                  itemBuilder: (context, index) {
-                    final community = state.communities[index];
+                child: state.communities.isEmpty
+                    ? const Center(
+                        child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                            textAlign: TextAlign.center,
+                            'Your interests doesn\'t have a match go to add interests by opening the drawer !'),
+                      ))
+                    : ListView.builder(
+                        itemCount: state.communities.length,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: getProportionateScreenWidth(12),
+                            vertical: getProportionateScreenHeight(12)),
+                        itemBuilder: (context, index) {
+                          final community = state.communities[index];
 
-                    return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(child: Builder(builder: (context) {
-                        return CommunityCard(
-                          clickable: community.users.contains(state.user) ||
-                                  community.type.toLowerCase() != 'paid'
-                              ? true
-                              : false,
-                          community: community,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider.value(
-                                value: homeCubitt,
-                                child: CommunityDetails(
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            child: SlideAnimation(
+                                child: Builder(builder: (context) {
+                              return CommunityCard(
                                   community: community,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      })),
-                    );
-                  },
-                ),
+                                  onTap: () {
+                                    community.type.toLowerCase() == 'paid' ||
+                                            !community.users
+                                                    .contains(state.user) &&
+                                                community.type.toLowerCase() ==
+                                                    'private'
+                                        ? errorSnackBar(context,
+                                            'Sorry, this is a ${community.type} community !')
+                                        : Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BlocProvider.value(
+                                                value: homeCubitt,
+                                                child: CommunityDetails(
+                                                  community: community,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                  });
+                            })),
+                          );
+                        },
+                      ),
               );
             }
             return ListView.builder(

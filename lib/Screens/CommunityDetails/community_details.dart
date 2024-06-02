@@ -39,24 +39,26 @@ class _CommunityDetailsState extends State<CommunityDetails> {
             return Padding(
               padding:
                   EdgeInsets.only(right: getProportionateScreenWidth(10.0)),
-              child: IconButton(
-                  onPressed: () {
-                    isSheetShowing == false
-                        ? showBottomSheet(
-                            enableDrag: false,
-                            context: context,
-                            builder: (context) {
-                              return CommunityInfo(
-                                id: widget.community.id,
-                              );
-                            },
-                          )
-                        : Navigator.pop(context);
-                    setState(() {
-                      isSheetShowing = !isSheetShowing;
-                    });
-                  },
-                  icon: const Icon(Icons.info_outline)),
+              child: isSheetShowing
+                  ? Container()
+                  : IconButton(
+                      onPressed: () {
+                        isSheetShowing == false
+                            ? showBottomSheet(
+                                enableDrag: false,
+                                context: context,
+                                builder: (context) {
+                                  return CommunityInfo(
+                                    id: widget.community.id,
+                                  );
+                                },
+                              )
+                            : Navigator.pop(context);
+                        setState(() {
+                          isSheetShowing = !isSheetShowing;
+                        });
+                      },
+                      icon: const Icon(Icons.info_outline)),
             );
           }),
         ],
@@ -183,7 +185,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                 builder: (context, state) {
                   return FloatingActionButton(
                     backgroundColor: Colors.white,
-                    // backgroundColor: Theme.of(context).colorScheme.secondary,
                     child: Image.asset(
                       'Img/calendar.png',
                       height: getProportionateScreenHeight(26),

@@ -7,24 +7,23 @@ import 'package:neu_social/Utils/size_config.dart';
 class CommunityCard extends StatelessWidget {
   final void Function()? onTap;
   final Community community;
-  final bool clickable;
 
   const CommunityCard({
     super.key,
     this.onTap,
     required this.community,
-    required this.clickable,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: clickable == false ? null : onTap,
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
+            // color: Colors.white,
             boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
@@ -87,30 +86,10 @@ class CommunityCard extends StatelessWidget {
                       color: Theme.of(context).disabledColor,
                     ),
               ),
-              // ReadMoreText(
-              //   community.interests
-              //       .map((e) => e)
-              //       .toList()
-              //       .toString()
-              //       .replaceAll("[", "")
-              //       .replaceAll("]", ""),
-              //   trimLines: 1,
-              //   moreStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-              //         color: Theme.of(context).disabledColor,
-              //       ),
-              //   lessStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-              //         color: Theme.of(context).disabledColor,
-              //       ),
-              //   trimMode: TrimMode.Line,
-              //   textAlign: TextAlign.start,
-              // ),
               ReadMoreText(
                 preDataText: "",
                 postDataText: "",
                 community.description,
-
-                // trimExpandedText: "",
-
                 trimLines: 2,
                 moreStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).disabledColor,

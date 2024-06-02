@@ -58,7 +58,7 @@ class CustomDropdownButton extends StatelessWidget {
               )
             ],
             borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
+            color: Theme.of(context).canvasColor,
           ),
         ),
         iconStyleData: IconStyleData(
@@ -70,7 +70,7 @@ class CustomDropdownButton extends StatelessWidget {
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: Colors.white,
+            color: Theme.of(context).canvasColor,
           ),
         ),
         menuItemStyleData: const MenuItemStyleData(
