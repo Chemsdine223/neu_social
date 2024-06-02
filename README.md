@@ -1,5 +1,3 @@
-# neu_social
-
 # This is the neu social app built with flutter and using SharedPreferences for my storage and Bloc/Cubit for my state management solution
 
 ## To use this app you just simply:
