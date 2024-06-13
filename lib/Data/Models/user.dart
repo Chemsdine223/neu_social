@@ -3,7 +3,7 @@ import 'dart:convert';
 class UserModel {
   final String firstname;
   final String lastname;
-  final DateTime dob;
+  final String dob;
   final String email;
 
   UserModel(
@@ -17,7 +17,7 @@ class UserModel {
 
     result.addAll({'firstname': firstname});
     result.addAll({'lastname': lastname});
-    result.addAll({'dob': dob.millisecondsSinceEpoch});
+    result.addAll({'dob': dob});
     result.addAll({'email': email});
 
     return result;
@@ -27,7 +27,7 @@ class UserModel {
     return UserModel(
       firstname: map['firstname'] ?? '',
       lastname: map['lastname'] ?? '',
-      dob: DateTime.fromMillisecondsSinceEpoch(map['dob']),
+      dob: map['dob'] ?? '',
       email: map['email'] ?? '',
     );
   }

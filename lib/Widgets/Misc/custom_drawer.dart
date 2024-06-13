@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Screens/Profile/profile.dart';
 import 'package:neu_social/Screens/add_interests.dart';
+import 'package:neu_social/Screens/chat.dart';
 import 'package:neu_social/Screens/community_management.dart';
 import 'package:neu_social/Screens/interests_screen.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
@@ -119,6 +121,20 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.add),
             title: const Text(
               'Add interests',
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const WebSocketScreen()),
+              );
+            },
+            leading: const Icon(Icons.chat),
+            title: const Text(
+              'Chat now',
             ),
           ),
           const Spacer(),

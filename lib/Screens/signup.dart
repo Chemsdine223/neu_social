@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neu_social/Data/Network_service/network_auth.dart';
+import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
 import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
+import 'package:neu_social/Screens/home.dart';
 import 'package:neu_social/Screens/interests_screen.dart';
 import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 import 'package:neu_social/Widgets/Inputs/custom_input.dart';
+import 'package:neu_social/Widgets/Misc/ovelay.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -36,11 +40,31 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SignupCubit, Authentication>(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        // print(state);
+        if (state is AuthFailure) {
+          errorSnackBar(context, state.message);
+        }
+        if (state is AuthSuccess) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ));
+        }
+      },
       builder: (context, state) {
         return Stack(
           children: [
             Scaffold(
+              // floatingActionButton: FloatingActionButton(
+              //   onPressed: () {
+              //     NetworkService.verifyUser();
+              //     // NetworkService.register('firstName', 'lastName',
+              //     //     'email1320@gmail.com', 'dob', 'password');
+              //   },
+              // ),
               body: SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -137,17 +161,13 @@ class _SignupState extends State<Signup> {
                                 child: CustomButton(
                                   onTap: () async {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<SignupCubit>().saveUser(
-                                          firstnameController.text,
-                                          lastnameController.text,
-                                          dob!,
-                                          emailController.text);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const InterestsScreen(),
-                                          ));
+                                      context.read<AuthCubit>().signup(
+                                            firstnameController.text,
+                                            lastnameController.text,
+                                            dob.toString(),
+                                            emailController.text,
+                                            passwordController.text,
+                                          );
                                     }
                                   },
                                   color: Colors.green.shade800,
@@ -173,9 +193,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
-            // state == Authentication.loading
-            //     ? const CustomOverlay()
-            //     : Container(),
+            state is AuthLoading ? const CustomOverlay() : Container(),
           ],
         );
       },

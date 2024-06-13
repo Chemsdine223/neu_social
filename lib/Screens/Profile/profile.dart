@@ -95,8 +95,7 @@ class _ProfileState extends State<Profile> {
                                   ListTile(
                                     leading: const Icon(Icons.date_range),
                                     title: const Text('Date of birth'),
-                                    trailing:
-                                        Text(formatDateTime(state.user.dob)),
+                                    trailing: Text(state.user.dob),
                                   ),
                                 ],
                               ),

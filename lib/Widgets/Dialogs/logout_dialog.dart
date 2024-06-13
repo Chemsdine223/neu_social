@@ -103,7 +103,9 @@ class _LogoutDialogState extends State<LogoutDialog> {
                 state == LogoutState.loading
                     ? Container(
                         height: getProportionateScreenHeight(200),
-                        color: Colors.black26,
+                        decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(12)),
                         child: const Center(
                           child: CircularProgressIndicator(
                             color: Colors.white,

@@ -53,7 +53,7 @@ List<Community> filterCommunitiesByInterests(
   }).toList();
 }
 
-String formatDateTime(DateTime dateTime, {String format = 'dd-MM-yyy'}) {
+String formatDateTime(DateTime dateTime, {String format = 'yyyy-MM-dd'}) {
   final DateFormat formatter = DateFormat(format);
 
   return formatter.format(dateTime);

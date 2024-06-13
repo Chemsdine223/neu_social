@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neu_social/Data/LocalStorage/storage_service.dart';
+import 'package:neu_social/Data/OfflineService/storage_service.dart';
+import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
+import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
 import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
+import 'package:neu_social/Screens/interests_screen.dart';
+import 'package:neu_social/Screens/login.dart';
 import 'package:neu_social/Screens/signup.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Theme/theme_data.dart';
@@ -28,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SignupCubit(),
+          create: (context) => AuthCubit(),
         ),
         BlocProvider(
           create: (context) => BottomSheetNavigationCubit(),
@@ -39,6 +43,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => LogoutCubit(),
         ),
+        BlocProvider(
+          create: (context) => WebSocketCubit(),
+        ),
       ],
       child: BlocBuilder<ThemeCubit, AppTheme>(
         builder: (context, theme) {
@@ -47,11 +54,11 @@ class MyApp extends StatelessWidget {
                 ? ThemeClass.lightTheme
                 : ThemeClass.dark,
             debugShowCheckedModeBanner: false,
-            home: BlocBuilder<SignupCubit, Authentication>(
-              builder: (context, auth) {
-                return auth == Authentication.authenticated
-                    ? const HomeScreen()
-                    : const Signup();
+            home: BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return state is AuthSuccess?
+                    ? const InterestsScreen()
+                    : const LoginScreen();
               },
             ),
           );

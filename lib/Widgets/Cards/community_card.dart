@@ -21,6 +21,7 @@ class CommunityCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
+            // color: Colors.blue,
             color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(12),
             // color: Colors.white,
