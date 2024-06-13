@@ -1,16 +1,13 @@
-# neu_social
+# This is the neu social app built with flutter and using SharedPreferences for my storage and Bloc/Cubit for my state management solution
 
-A new Flutter project.
+## To use this app you just simply:
 
-## Getting Started
+1. Clone the project from this repo.
+2. Run flutter pub get to get the packages 
+3. Run it on your emulator
+4. Enjoy and explore the features !
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project is implemented using local storage with SharedPreferences as per the requirements provided. There are no API integrations in the current version.
+If you have any questions or feedback, please feel free to reach out on my email Chemsdine223@gmail.com
