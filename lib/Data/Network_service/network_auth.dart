@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/user.dart';
-import 'package:neu_social/Utils/helpers.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,14 +62,16 @@ class NetworkService {
     );
 
     final data = jsonDecode(response.body);
+
     if (response.statusCode == 200) {
       final user = UserModel.fromMap(data['user']);
 
       accessToken = data['access'];
+
       await saveTokens();
       return user;
     } else {
-      throw data['error'];
+      throw data['message'];
     }
   }
 
@@ -78,6 +79,7 @@ class NetworkService {
     await loadTokens();
 
     print(accessToken);
+
     final response = await http.get(
       Uri.parse(getUser),
       headers: {
@@ -86,13 +88,18 @@ class NetworkService {
       },
     );
 
+    print(response.body);
+
     final data = jsonDecode(response.body);
+
+    print('This is the data: ${data['user']['_id']}');
 
     if (response.statusCode == 200) {
       final user = UserModel.fromMap(data['user']);
 
-      // accessToken = data['access'];
-      // await saveTokens();
+      accessToken = data['access'];
+      id = data['user']['_id'];
+      await saveTokens();
       return user;
     } else {
       throw data['error'];
@@ -121,11 +128,11 @@ class NetworkService {
     log(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print('Decoded data $data');
       final user = UserModel.fromMap(data);
       log('user $user');
 
       accessToken = data['access'];
+      id = data['user']['id'];
 
       await saveTokens();
 

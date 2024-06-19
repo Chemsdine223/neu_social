@@ -6,7 +6,6 @@ import 'package:neu_social/Screens/Profile/profile.dart';
 import 'package:neu_social/Screens/add_interests.dart';
 import 'package:neu_social/Screens/chat.dart';
 import 'package:neu_social/Screens/community_management.dart';
-import 'package:neu_social/Screens/interests_screen.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Dialogs/logout_dialog.dart';

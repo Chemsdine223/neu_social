@@ -137,8 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         .textTheme
                                         .bodyLarge!
                                         .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                 ),
                               ),

@@ -8,13 +8,17 @@ import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/post.dart';
 import 'package:neu_social/Data/Models/user.dart';
+import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Utils/helpers.dart';
 
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeInitial()) {
+  AuthCubit auth;
+
+  HomeCubit(this.auth) : super(HomeInitial()) {
+    // ? if we set the lazy flag to false we don't need to build to activate the provider //
     getHomeData();
   }
 
@@ -75,15 +79,16 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoading());
     await Future.delayed(const Duration(seconds: 1));
 
-    final user = await StorageService().getUser();
-
     final userInterests = await StorageService().getInterests();
     final dummyCommunities = await StorageService().getDefaultCommunities();
 
     final filteredCommunities =
         filterCommunitiesByInterests(dummyCommunities, userInterests);
 
-    emit(HomeLoaded(communities: filteredCommunities, user: user));
+    if (auth.state is AuthSuccess) {
+      final user = (auth.state as AuthSuccess).user;
+      emit(HomeLoaded(communities: filteredCommunities, user: user));
+    }
   }
 
   createCommunity(
@@ -123,7 +128,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoaded(communities: filteredCommunities, user: user));
   }
 
-    addInterest(String interest) async {
+  addInterest(String interest) async {
     await StorageService().addInterest(interest);
 
     // Get updated data

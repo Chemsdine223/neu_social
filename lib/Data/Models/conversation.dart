@@ -29,37 +29,41 @@ class Conversation {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    result.addAll({'id': id});
+
+    result.addAll({'_id': id});
     result.addAll({'users': users.map((x) => x.toMap()).toList()});
     result.addAll({'messages': messages.map((x) => x.toMap()).toList()});
-  
+
     return result;
   }
 
   factory Conversation.fromMap(Map<String, dynamic> map) {
     return Conversation(
-      id: map['id'] ?? '',
-      users: List<UserModel>.from(map['users']?.map((x) => UserModel.fromMap(x))),
-      messages: List<Message>.from(map['messages']?.map((x) => Message.fromMap(x))),
+      id: map['_id'] ?? '',
+      users:
+          List<UserModel>.from(map['users']?.map((x) => UserModel.fromMap(x))),
+      messages:
+          List<Message>.from(map['messages']?.map((x) => Message.fromMap(x))),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Conversation.fromJson(String source) => Conversation.fromMap(json.decode(source));
+  factory Conversation.fromJson(String source) =>
+      Conversation.fromMap(json.decode(source));
 
   @override
-  String toString() => 'Conversation(id: $id, users: $users, messages: $messages)';
+  String toString() =>
+      'Conversation(id: $id, users: $users, messages: $messages)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Conversation &&
-      other.id == id &&
-      listEquals(other.users, users) &&
-      listEquals(other.messages, messages);
+        other.id == id &&
+        listEquals(other.users, users) &&
+        listEquals(other.messages, messages);
   }
 
   @override

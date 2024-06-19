@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neu_social/Data/Network_service/network_auth.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
-import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
-import 'package:neu_social/Screens/interests_screen.dart';
 import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';

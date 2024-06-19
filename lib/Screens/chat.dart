@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neu_social/Data/Network_service/network_auth.dart';
 import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
+import 'package:neu_social/Screens/room.dart';
 
 class WebSocketScreen extends StatelessWidget {
   const WebSocketScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final cubit = context.read<WebSocketCubit>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('WebSocket Example'),
@@ -17,35 +17,57 @@ class WebSocketScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is WebSocketConnected) {
             return ListView.builder(
-              itemCount: state.messages.length,
+              itemCount: state.conversations.length,
               itemBuilder: (context, index) {
-                Icon? icon;
-
-                switch (state.messages[index].status) {
-                  case 'read':
-                    icon = const Icon(
-                      Icons.done_all,
-                      color: Colors.blue,
-                    );
-                    break;
-                  case 'received':
-                    icon = const Icon(Icons.done_all);
-                    break;
-                  case 'sent':
-                    icon = const Icon(Icons.done);
-                    break;
-                  default:
-                }
-
+                final conversation = state.conversations[index];
                 return ListTile(
-                  title: Text(state.messages[index].content),
-                  trailing: icon,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Room(
+                        roomId: conversation.id,
+                      ),
+                    ),
+                  ),
+                  leading: const CircleAvatar(),
+                  trailing: Text(state.conversations[index].messages
+                      .where((element) => element.status != "read")
+                      .length
+                      .toString()),
+
+                  title: Text(
+                    state.conversations[index].users
+                        .where((element) => element.id != NetworkService.id)
+                        .first
+                        .email,
+                  ),
+                  subtitle:
+                      Text(state.conversations[index].messages.last.content),
+                  // trailing: icon,
                 );
               },
             );
           }
           if (state is WebSocketDisconnected) {
-            return const Center(child: Text('Disconnected'));
+            return ListView.builder(
+              itemCount: state.conversations.length,
+              itemBuilder: (context, index) {
+                final conversation = state.conversations[index];
+
+                return ListTile(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Room(
+                          roomId: conversation.id,
+                        ),
+                      )),
+                  title: Text(
+                      state.conversations[index].messages.length.toString()),
+                  // trailing: icon,
+                );
+              },
+            );
           }
           return const Center(child: CircularProgressIndicator());
         },
@@ -53,44 +75,3 @@ class WebSocketScreen extends StatelessWidget {
     );
   }
 }
-
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:neu_social/Logic/ChatCubit/chat_cubit.dart';
-// import 'package:neu_social/Screens/room.dart';
-
-// class Chat extends StatefulWidget {
-//   const Chat({super.key});
-
-//   @override
-//   State<Chat> createState() => _ChatState();
-// }
-
-// class _ChatState extends State<Chat> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(
-//       create: (context) => ChatCubit(),
-//       child: BlocBuilder<ChatCubit, ChatState>(
-//         builder: (context, state) {
-//           return Scaffold(
-//             body: ListView.builder(
-//               itemCount: 12,
-//               itemBuilder: (context, index) {
-//                 return ListTile(
-//                   onTap: () => Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => const Room(),
-//                       )),
-//                   title: Text('Conversation $index'),
-//                 );
-//               },
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }

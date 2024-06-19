@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class UserModel {
   final String firstname;
+  final String id;
   final String lastname;
   final String dob;
   final String email;
@@ -9,6 +10,7 @@ class UserModel {
   UserModel(
       {required this.firstname,
       required this.lastname,
+      required this.id,
       required this.dob,
       required this.email});
 
@@ -19,6 +21,7 @@ class UserModel {
     result.addAll({'lastname': lastname});
     result.addAll({'dob': dob});
     result.addAll({'email': email});
+    result.addAll({'_id': id});
 
     return result;
   }
@@ -26,6 +29,7 @@ class UserModel {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       firstname: map['firstname'] ?? '',
+      id: map['_id'] ?? '',
       lastname: map['lastname'] ?? '',
       dob: map['dob'] ?? '',
       email: map['email'] ?? '',
@@ -45,6 +49,7 @@ class UserModel {
         other.firstname == firstname &&
         other.lastname == lastname &&
         other.dob == dob &&
+        other.id == id &&
         other.email == email;
   }
 
@@ -52,6 +57,7 @@ class UserModel {
   int get hashCode {
     return firstname.hashCode ^
         lastname.hashCode ^
+        id.hashCode ^
         dob.hashCode ^
         email.hashCode;
   }

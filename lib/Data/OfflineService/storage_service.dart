@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:neu_social/Data/DummyData/dummy.dart';
 import 'package:neu_social/Data/Models/community.dart';
+import 'package:neu_social/Data/Models/conversation.dart';
 import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/message.dart';
 import 'package:neu_social/Data/Models/post.dart';
@@ -18,13 +19,13 @@ class StorageService {
     await prefs.setString('messages', encodedMessages);
   }
 
-  static Future<List<Message>> loadMessages() async {
+  static Future<List<Conversation>> loadConversations() async {
     final prefs = await SharedPreferences.getInstance();
     final String? encodedMessages = prefs.getString('messages');
     if (encodedMessages != null) {
       final List<dynamic> decodedMessages = jsonDecode(encodedMessages);
       return decodedMessages
-          .map((message) => Message.fromMap(message))
+          .map((message) => Conversation.fromMap(message))
           .toList();
     }
     return [];
@@ -167,8 +168,10 @@ class StorageService {
     final lastname = prefs.getString('lastname');
     final dob = prefs.getString('dob');
     final email = prefs.getString('email');
+    final id = prefs.getString('id');
 
     return UserModel(
+      id: id ?? '',
       firstname: firstname ?? '',
       lastname: lastname ?? '',
       dob: dob ?? "",

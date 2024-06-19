@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
-import 'package:neu_social/Screens/signup.dart';
+import 'package:neu_social/Screens/login.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 
@@ -21,7 +21,7 @@ class _LogoutDialogState extends State<LogoutDialog> {
           Navigator.pop(context);
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) {
-              return const Signup();
+              return const LoginScreen();
             },
           ));
         }

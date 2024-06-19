@@ -1,10 +1,20 @@
 // import 'dart:convert';
 // import 'dart:developer';
 
+// import 'dart:developer';
+
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Constants/constants.dart';
+import 'package:neu_social/Data/Models/conversation.dart';
 import 'package:neu_social/Data/Models/message.dart';
-// import 'package:neu_social/Data/OfflineService/storage_service.dart';
+import 'package:neu_social/Data/Models/user.dart';
+import 'package:neu_social/Data/Network_service/network_auth.dart';
+import 'package:neu_social/Data/Network_service/network_data.dart';
+import 'package:neu_social/Data/OfflineService/storage_service.dart';
+import 'package:neu_social/Data/OfflineService/storage_service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as manager;
 
@@ -13,13 +23,20 @@ abstract class WebSocketState {}
 
 class WebSocketInitial extends WebSocketState {}
 
-class WebSocketConnected extends WebSocketState {
-  final List<Message> messages;
+class WebSocketLoading extends WebSocketState {}
 
-  WebSocketConnected(this.messages);
+class WebSocketConnected extends WebSocketState {
+  // final List<Message> messages;
+  final List<Conversation> conversations;
+
+  WebSocketConnected(this.conversations);
 }
 
-class WebSocketDisconnected extends WebSocketState {}
+class WebSocketDisconnected extends WebSocketState {
+  final List<Conversation> conversations;
+
+  WebSocketDisconnected(this.conversations);
+}
 
 class WebSocketDataReceived extends WebSocketState {
   final List<Message> messages;
@@ -33,94 +50,223 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     connectAndListen();
   }
 
-  void connectAndListen() async {
-    Socket socket = manager.io(
-      socketUrl,
-      OptionBuilder().setTransports(['websocket']).build(),
-    );
+  Socket socket = manager.io(
+    socketUrl,
+    OptionBuilder().setTransports(['websocket']).build(),
+  );
 
-    // String id = NetworkService.id;
+  List<Conversation> initialConversations = [];
+
+  void sendReadStatus(String messageId, String roomId, String senderId) {
+    socket.emit(
+        'read',
+        jsonEncode({
+          "messageId": messageId,
+          "senderId": senderId,
+          "roomId": roomId,
+        }));
+  }
+
+  getConversations() async {
+    try {
+      final conversations = await NetworkData().getConversations();
+      initialConversations = conversations;
+      emit(WebSocketConnected(conversations));
+    } catch (e) {
+      emit(WebSocketDisconnected(initialConversations));
+    }
+  }
+
+  void messageStatus(
+      String messageId, String status, String conversationId) async {
+    if (state is WebSocketConnected) {
+      log('here I am ');
+      final sstate = state as WebSocketConnected;
+
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+
+      if (existingIndex != -1) {
+        final conversation = sstate.conversations[existingIndex];
+        final messageIndex =
+            conversation.messages.indexWhere((m) => m.id == messageId);
+
+        if (messageIndex != -1) {
+          final updatedMessage =
+              conversation.messages[messageIndex].copyWith(status: status);
+
+          final updatedMessages = List<Message>.from(conversation.messages)
+            ..[messageIndex] = updatedMessage;
+
+          final updatedConversation =
+              conversation.copyWith(messages: updatedMessages);
+
+          final updatedConversations =
+              List<Conversation>.from(sstate.conversations)
+                ..[existingIndex] = updatedConversation;
+
+          emit(WebSocketConnected(updatedConversations));
+        }
+      }
+    }
+  }
+
+  void processReceivedMessage(Message message) {
+    if (state is WebSocketConnected) {
+      final sstate = state as WebSocketConnected;
+
+      final conversationId = message.roomId;
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+      final existingConversation =
+          sstate.conversations.where((c) => c.id == conversationId).first;
+
+      if (existingIndex != -1) {
+        sstate.conversations[existingIndex].messages.add(message);
+      } else {
+        sstate.conversations.add(Conversation(
+          id: conversationId,
+          messages: [message],
+          users: [existingConversation.users[0], existingConversation.users[1]],
+        ));
+      }
+
+      emit(WebSocketConnected(
+        List.from(
+          sstate.conversations,
+        ),
+      ));
+    }
+  }
+
+  void processReceivedAll(String conversationId) {
+    if (state is WebSocketConnected) {
+      final sstate = state as WebSocketConnected;
+
+      // Find the index of the conversation
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+
+      if (existingIndex != -1) {
+        // Update the status of all messages in the conversation to "received" if they are not "read"
+        final updatedMessages =
+            sstate.conversations[existingIndex].messages.map((message) {
+          if (message.status != 'read') {
+            return message.copyWith(status: 'received');
+          }
+          return message;
+        }).toList();
+
+        // Create a new conversation with the updated messages
+        final updatedConversation = sstate.conversations[existingIndex]
+            .copyWith(messages: updatedMessages);
+
+        // Create a new list of conversations with the updated conversation
+        final updatedConversations = List.from(sstate.conversations)
+          ..[existingIndex] = updatedConversation;
+
+        // Emit the new state with the updated conversations
+        emit(WebSocketConnected(
+          List.from(updatedConversations),
+        ));
+      }
+    }
+  }
+
+  List<UserModel> getUsersExcludingCurrent() {
+    if (state is WebSocketConnected) {
+      final currentState = state as WebSocketConnected;
+      List<UserModel> filteredUsers = [];
+
+      for (var conversation in currentState.conversations) {
+        final usersInConversation = conversation.users
+            .where((user) => user.id != NetworkService.id)
+            .toList();
+        filteredUsers.addAll(usersInConversation);
+      }
+
+      print(filteredUsers[0]);
+
+      return filteredUsers;
+    }
+    return [];
+  }
+
+  void connectAndListen() async {
+    await getConversations();
+
+    await NetworkService.loadTokens();
+
     socket.io.options!['extraHeaders'] = {
-      "id": "6669804bd7bad1fe82c5fbbc",
+      "id": NetworkService.id,
     };
 
     socket
       ..disconnect()
       ..connect();
 
-    // List<Message> defaultMessages = await StorageService.loadMessages();
-
-    // print(defaultMessages);
-
     socket.onConnect((_) {
-      emit(WebSocketConnected([]));
+      if (state is WebSocketConnected) {
+        final currentState = state as WebSocketConnected;
+        for (var conversation in currentState.conversations) {
+          final filteredUsers = conversation.users
+              .where((user) => user.id != NetworkService.id)
+              .toList();
+          for (var user in filteredUsers) {
+            print(user.id);
+            socket.emit(
+              'receivedAll',
+              jsonEncode({
+                "roomId": conversation.id,
+                "receiverId": user.id,
+              }),
+            );
+          }
+        }
+      }
+      emit(WebSocketConnected(initialConversations));
     });
 
     socket.on('message', (data) {
-      print('Message received: $data');
       final message = Message.fromMap(data['message']);
-      
-      // socket.emit('received', (data) {
-      // !  jsonEncode('send the message id and the receiver id back');
-      // });
+      processReceivedMessage(message);
 
-      if (state is WebSocketConnected) {
-        final currentState = state as WebSocketConnected;
-        currentState.messages.add(message);
-        // defaultMessages.add(message);
+      // print(message.senderId);
+      // print(message.receiverId);
 
-        emit(WebSocketConnected(List.from(currentState.messages)));
-
-        // Check if message is already in the list to prevent duplicates
-      }
+      socket.emit(
+          'received',
+          jsonEncode({
+            "messageId": message.id,
+            "roomId": message.roomId,
+            "senderId": message.senderId,
+          }));
     });
 
     socket.on('receivedAll', (data) {
-      print('Read event received: $data');
-      if (state is WebSocketConnected) {
-        final currentState = state as WebSocketConnected;
-
-        // Update the status of all messages to "read"
-        final updatedMessages = currentState.messages.map((message) {
-          print(message);
-          return message.copyWith(status: 'received');
-        }).toList();
-
-        // Emit a new state with the updated messages list
-        emit(WebSocketConnected(updatedMessages));
-      }
+      processReceivedAll(data['room']);
     });
 
     socket.on('read', (data) {
-      if (state is WebSocketConnected) {
-        final currentState = state as WebSocketConnected;
-        final id = data['messageId'];
-
-        // Update the status of the message with the corresponding ID
-        final updatedMessages = currentState.messages.map((message) {
-          if (message.id == id) {
-            return message.copyWith(status: 'read');
-          } else {
-            print('No: ${message.id}');
-            return message;
-          }
-        }).toList();
-
-        // Emit a new state with the updated messages list
-        emit(WebSocketConnected(updatedMessages));
-      }
+      print('read event: $data');
+      messageStatus(data['messageId'], "read", data['roomId']);
     });
 
-    // socket.vola
+    socket.on('received', (data) {
+      print('receivedEvent event: $data');
+      messageStatus(data['messageId'], "received", data['roomId']);
+    });
 
     socket.onAny((event, data) {
-      print(event);
-      // print(data);
+      log(event);
+      log(data.toString());
     });
 
     socket.onDisconnect((_) {
-      // StorageService.saveMessages(defaultMessages);
-      // emit(WebSocketDisconnected());
+      if (state is WebSocketConnected) {
+        initialConversations = (state as WebSocketConnected).conversations;
+      }
+      emit(WebSocketDisconnected(initialConversations));
     });
   }
 }

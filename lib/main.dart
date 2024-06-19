@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:neu_social/Data/OfflineService/storage_service.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
 import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
-import 'package:neu_social/Logic/SignupCubit/signup_cubit.dart';
+
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
-import 'package:neu_social/Screens/interests_screen.dart';
+
+import 'package:neu_social/Screens/loading.dart';
 import 'package:neu_social/Screens/login.dart';
-import 'package:neu_social/Screens/signup.dart';
+
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Theme/theme_data.dart';
 import 'package:neu_social/Utils/size_config.dart';
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          lazy: false,
           create: (context) => AuthCubit(),
         ),
         BlocProvider(
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
           create: (context) => LogoutCubit(),
         ),
         BlocProvider(
+          // lazy: false,
           create: (context) => WebSocketCubit(),
         ),
       ],
@@ -56,9 +60,13 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
-                return state is AuthSuccess?
-                    ? const InterestsScreen()
-                    : const LoginScreen();
+                if (state is AuthUserCheck) {
+                  return const LoadingScreen();
+                } else if (state is AuthSuccess) {
+                  return const HomeScreen();
+                } else {
+                  return const LoginScreen();
+                }
               },
             ),
           );

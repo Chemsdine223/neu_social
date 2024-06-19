@@ -11,7 +11,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   verifyUser() async {
-    emit(AuthLoading());
+    emit(AuthUserCheck());
     try {
       final user = await NetworkService.verifyUser();
       emit(AuthSuccess(user));
@@ -33,11 +33,9 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await NetworkService.register(
           firstname, lastname, email, dob, password);
 
-      print("user $user");
 
       emit(AuthSuccess(user));
     } catch (e) {
-      print(e);
       emit(AuthFailure(e.toString()));
     }
   }

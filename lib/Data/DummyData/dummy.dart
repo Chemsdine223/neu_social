@@ -6,48 +6,56 @@ import 'package:neu_social/Data/Models/post.dart';
 // Define more dummy users
 final List<UserModel> users = [
   UserModel(
+    id: "9876543215678",
     firstname: "Jimmy",
     lastname: 'Kimmel',
     email: 'jimmy.kimmel@example.com',
     dob: "1995-06-12",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "John",
     lastname: 'Lennon',
     email: 'john.lennon@example.com',
     dob: "1997-03-11",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "Jane",
     lastname: 'Doe',
     email: 'jane.doe@example.com',
     dob: "1998-01-15",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "Alice",
     lastname: 'Smith',
     email: 'alice.smith@example.com',
     dob: "1992-07-24",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "Bob",
     lastname: 'Johnson',
     email: 'bob.johnson@example.com',
     dob: "1990-11-05",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "Eve",
     lastname: 'Adams',
     email: 'eve.adams@example.com',
     dob: "1985-04-20",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "James",
     lastname: 'Stevenson',
     email: 'james.stevenson@example.com',
     dob: "1995-06-12",
   ),
   UserModel(
+    id: "9876543215678",
     firstname: "Amy",
     lastname: 'Brown',
     email: 'amy.brown@example.com',

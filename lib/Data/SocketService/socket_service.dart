@@ -12,11 +12,11 @@ class SocketService {
 
   connectToSocket() {
     socket.connect();
-    socket.connected ? print('Yes') : print('No');
+    // socket.connected ? print('Yes') : print('No');
   }
 
   readMessage() {
     socket.emit('read');
-    socket.on('read', (data) => print('read message'));
+    // socket.on('read', (data) => print('read message'));
   }
 }
