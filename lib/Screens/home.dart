@@ -83,21 +83,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .length;
                                   });
                                 }
-                                return Align(
-                                  alignment: Alignment.topRight,
-                                  child: CircleAvatar(
-                                    radius: getProportionateScreenHeight(12),
-                                    child: Text(
-                                      '$unreadMessagesCount',
-                                      style: TextStyle(
-                                        color:
-                                            Theme.of(context).colorScheme.error,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                );
+                                return unreadMessagesCount == 0
+                                    ? Container()
+                                    : Align(
+                                        alignment: Alignment.topRight,
+                                        child: CircleAvatar(
+                                          radius:
+                                              getProportionateScreenHeight(12),
+                                          child: Text(
+                                            '$unreadMessagesCount',
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      );
                               },
                             ),
                           ],

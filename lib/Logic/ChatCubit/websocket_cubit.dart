@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/conversation.dart';
@@ -13,8 +14,6 @@ import 'package:neu_social/Data/Models/message.dart';
 import 'package:neu_social/Data/Models/user.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
 import 'package:neu_social/Data/Network_service/network_data.dart';
-import 'package:neu_social/Data/OfflineService/storage_service.dart';
-import 'package:neu_social/Data/OfflineService/storage_service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as manager;
 
@@ -111,6 +110,34 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     }
   }
 
+  void processSentMessage(Message message) {
+    if (state is WebSocketConnected) {
+      final sstate = state as WebSocketConnected;
+
+      final conversationId = message.roomId;
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+      final existingConversation =
+          sstate.conversations.where((c) => c.id == conversationId).first;
+
+      if (existingIndex != -1) {
+        sstate.conversations[existingIndex].messages.add(message);
+      } else {
+        sstate.conversations.add(Conversation(
+          id: conversationId,
+          messages: [message],
+          users: [existingConversation.users[0], existingConversation.users[1]],
+        ));
+      }
+
+      emit(WebSocketConnected(
+        List.from(
+          sstate.conversations,
+        ),
+      ));
+    }
+  }
+
   void processReceivedMessage(Message message) {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
@@ -192,6 +219,10 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     return [];
   }
 
+  void sendMessage() {
+    socket.emit('message', {});
+  }
+
   void connectAndListen() async {
     await getConversations();
 
@@ -235,12 +266,15 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       // print(message.receiverId);
 
       socket.emit(
-          'received',
-          jsonEncode({
+        'received',
+        jsonEncode(
+          {
             "messageId": message.id,
             "roomId": message.roomId,
             "senderId": message.senderId,
-          }));
+          },
+        ),
+      );
     });
 
     socket.on('receivedAll', (data) {
@@ -261,6 +295,8 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       log(event);
       log(data.toString());
     });
+
+    socket.on('sent', (data) {});
 
     socket.onDisconnect((_) {
       if (state is WebSocketConnected) {

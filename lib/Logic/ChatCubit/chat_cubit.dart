@@ -1,83 +1,211 @@
 // // import 'dart:io';
 
-// import 'package:bloc/bloc.dart';
-// import 'package:equatable/equatable.dart';
-// import 'package:neu_social/Constants/constants.dart';
-// import 'package:neu_social/Data/Models/conversation.dart';
-// import 'package:neu_social/Data/Models/message.dart';
-// import 'package:socket_io_client/socket_io_client.dart';
+import 'dart:convert';
+import 'dart:developer';
 
-// part 'chat_state.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:neu_social/Constants/constants.dart';
+import 'package:neu_social/Data/Models/conversation.dart';
+import 'package:neu_social/Data/Models/message.dart';
+import 'package:neu_social/Data/Network_service/network_auth.dart';
+import 'package:neu_social/Data/Network_service/network_data.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+import 'package:socket_io_client/socket_io_client.dart' as manager;
 
-// class ChatCubit extends Cubit<ChatState> {
-//   ChatCubit() : super(ChatInitial()) {
-//     connectAndListen();
-//   }
+part 'chat_state.dart';
 
-//   Socket socket = io(
-//     baseUrl,
-//     OptionBuilder()
-//         .setTransports(['websocket']).setExtraHeaders({"id": "123456"}).build(),
-//   );
+class ChatCubit extends Cubit<ChatState> {
+  ChatCubit() : super(ChatInitial());
 
-//   void connectAndListen() {
-//     socket.onConnect((_) {
-//       emit(Connected([]));
-//     });
+  List<Conversation> initialConversations = [];
 
-//     socket.on('message', (data) {
-//       print('Message received: $data');
-//       final message = Message.fromMap(data);
+  Socket socket = manager.io(
+    socketUrl,
+    OptionBuilder().setTransports(['websocket']).build(),
+  );
 
-//       if (state is Connected) {
-//         final currentState = state as Connected;
-//         currentState.conversations.add(message);
+  void messageStatus(
+      String messageId, String status, String conversationId) async {
+    if (state is Connected) {
+      log('here I am ');
+      final sstate = state as Connected;
 
-//         emit(Connected(List.from(currentState.messages)));
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
 
-//         // Check if message is already in the list to prevent duplicates
-//       }
-//     });
+      if (existingIndex != -1) {
+        final conversation = sstate.conversations[existingIndex];
+        final messageIndex =
+            conversation.messages.indexWhere((m) => m.id == messageId);
 
-//     socket.on('receivedAll', (data) {
-//       print('Read event received: $data');
-//       if (state is WebSocketConnected) {
-//         final currentState = state as WebSocketConnected;
+        if (messageIndex != -1) {
+          final updatedMessage =
+              conversation.messages[messageIndex].copyWith(status: status);
 
-//         // Update the status of all messages to "read"
-//         final updatedMessages = currentState.messages.map((message) {
-//           print(message);
-//           return message.copyWith(status: 'received');
-//         }).toList();
+          final updatedMessages = List<Message>.from(conversation.messages)
+            ..[messageIndex] = updatedMessage;
 
-//         // Emit a new state with the updated messages list
-//         emit(WebSocketConnected(updatedMessages));
-//       }
-//     });
+          final updatedConversation =
+              conversation.copyWith(messages: updatedMessages);
 
-//     socket.on('read', (data) {
-//       print('Read event received: $data');
-//       if (state is WebSocketConnected) {
-//         final currentState = state as WebSocketConnected;
+          final updatedConversations =
+              List<Conversation>.from(sstate.conversations)
+                ..[existingIndex] = updatedConversation;
 
-//         // Update the status of all messages to "read"
-//         final updatedMessages = currentState.messages.map((message) {
-//           print(message);
-//           return message.copyWith(status: 'read');
-//         }).toList();
+          emit(Connected(updatedConversations));
+        }
+      }
+    }
+  }
 
-//         // Emit a new state with the updated messages list
-//         emit(WebSocketConnected(updatedMessages));
-//       }
-//     });
+  void processReceivedMessage(Message message) {
+    if (state is Connected) {
+      final sstate = state as Connected;
 
-//     socket.onAny((event, data) {
-//       print(event);
-//       // print(data);
-//     });
+      final conversationId = message.roomId;
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+      final existingConversation =
+          sstate.conversations.where((c) => c.id == conversationId).first;
 
-//     socket.onDisconnect((_) {
-//       emit(WebSocketDisconnected());
-//     });
-//   }
-// }
+      if (existingIndex != -1) {
+        sstate.conversations[existingIndex].messages.add(message);
+      } else {
+        sstate.conversations.add(Conversation(
+          id: conversationId,
+          messages: [message],
+          users: [existingConversation.users[0], existingConversation.users[1]],
+        ));
+      }
+
+      emit(Connected(
+        List.from(
+          sstate.conversations,
+        ),
+      ));
+    }
+  }
+
+  void processReceivedAll(String conversationId) {
+    if (state is Connected) {
+      final sstate = state as Connected;
+
+      // Find the index of the conversation
+      final existingIndex =
+          sstate.conversations.indexWhere((c) => c.id == conversationId);
+
+      if (existingIndex != -1) {
+        // Update the status of all messages in the conversation to "received" if they are not "read"
+        final updatedMessages =
+            sstate.conversations[existingIndex].messages.map((message) {
+          if (message.status != 'read') {
+            return message.copyWith(status: 'received');
+          }
+          return message;
+        }).toList();
+
+        // Create a new conversation with the updated messages
+        final updatedConversation = sstate.conversations[existingIndex]
+            .copyWith(messages: updatedMessages);
+
+        // Create a new list of conversations with the updated conversation
+        final updatedConversations = List.from(sstate.conversations)
+          ..[existingIndex] = updatedConversation;
+
+        // Emit the new state with the updated conversations
+        emit(Connected(
+          List.from(updatedConversations),
+        ));
+      }
+    }
+  }
+
+  getConversations() async {
+    try {
+      final conversations = await NetworkData().getConversations();
+      initialConversations = conversations;
+      emit(Connected(conversations));
+    } catch (e) {
+      emit(Connected(initialConversations));
+    }
+  }
+
+  void connectAndListen() async {
+    await getConversations();
+
+    await NetworkService.loadTokens();
+
+    socket.io.options!['extraHeaders'] = {
+      "id": NetworkService.id,
+    };
+
+    socket
+      ..disconnect()
+      ..connect();
+
+    socket.onConnect((_) {
+      if (state is Connected) {
+        final currentState = state as Connected;
+        for (var conversation in currentState.conversations) {
+          final filteredUsers = conversation.users
+              .where((user) => user.id != NetworkService.id)
+              .toList();
+          for (var user in filteredUsers) {
+            print(user.id);
+            socket.emit(
+              'receivedAll',
+              jsonEncode({
+                "roomId": conversation.id,
+                "receiverId": user.id,
+              }),
+            );
+          }
+        }
+      }
+      emit(Connected(initialConversations));
+    });
+
+    socket.on('message', (data) {
+      final message = Message.fromMap(data['message']);
+      processReceivedMessage(message);
+
+      // print(message.senderId);
+      // print(message.receiverId);
+
+      socket.emit(
+          'received',
+          jsonEncode({
+            "messageId": message.id,
+            "roomId": message.roomId,
+            "senderId": message.senderId,
+          }));
+    });
+
+    socket.on('receivedAll', (data) {
+      processReceivedAll(data['room']);
+    });
+
+    socket.on('read', (data) {
+      print('read event: $data');
+      messageStatus(data['messageId'], "read", data['roomId']);
+    });
+
+    socket.on('received', (data) {
+      print('receivedEvent event: $data');
+      messageStatus(data['messageId'], "received", data['roomId']);
+    });
+
+    socket.onAny((event, data) {
+      log(event);
+      log(data.toString());
+    });
+
+    socket.onDisconnect((_) {
+      if (state is Connected) {
+        initialConversations = (state as Connected).conversations;
+      }
+      emit(Disconnected(initialConversations));
+    });
+  }
+}

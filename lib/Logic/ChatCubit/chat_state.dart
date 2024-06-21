@@ -1,20 +1,26 @@
-// part of 'chat_cubit.dart';
+part of 'chat_cubit.dart';
 
-// sealed class ChatState extends Equatable {
-//   const ChatState();
+sealed class ChatState extends Equatable {
+  const ChatState();
 
-//   @override
-//   List<Object> get props => [];
-// }
+  @override
+  List<Object> get props => [];
+}
 
-// final class ChatInitial extends ChatState {}
+final class ChatInitial extends ChatState {}
 
-// final class Connected extends ChatState {
-//   final List<Conversation> conversations;
+final class Connected extends ChatState {
+  final List<Conversation> conversations;
 
-//   const Connected(this.conversations);
-//   @override
-//   List<Object> get props => [conversations];
-// }
+  const Connected(this.conversations);
+  @override
+  List<Object> get props => [conversations];
+}
 
-// final class Disconnected extends ChatState {}
+final class Disconnected extends ChatState {
+    final List<Conversation> conversations;
+
+  const Disconnected(this.conversations);
+  @override
+  List<Object> get props => [conversations];
+}

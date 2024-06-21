@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
 
 import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
+import 'package:neu_social/Utils/size_config.dart';
+import 'package:neu_social/Widgets/Inputs/custom_input.dart';
 
 class Room extends StatefulWidget {
   final String roomId;
@@ -18,6 +21,7 @@ class Room extends StatefulWidget {
 }
 
 class _RoomState extends State<Room> {
+  final postController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,23 +47,50 @@ class _RoomState extends State<Room> {
             final conversation = state.conversations
                 .where((element) => element.id == widget.roomId)
                 .first;
-            final messages = conversation.messages;
-            return ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  // print(message.status);
-                  if (message.status != 'read') {
-                    log(message.status);
-                    log(message.senderId);
-                    context.read<WebSocketCubit>().sendReadStatus(
-                        message.id, conversation.id, NetworkService.id);
-                  }
-                  return ListTile(
-                    title: Text(message.content),
-                    trailing: Text(message.status),
-                  );
-                });
+            final messages = conversation.messages.reversed.toList();
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      // print(message.status);
+                      if (message.status != 'read') {
+                        log(message.status);
+                        log(message.senderId);
+                        context.read<WebSocketCubit>().sendReadStatus(
+                            message.id, conversation.id, NetworkService.id);
+                      }
+                      return ListTile(
+                        title: Text(message.content),
+                        trailing: Text(message.status),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: getProportionateScreenWidth(12),
+                  ),
+                  child: CustomTextField(
+                    icon: InkWell(
+                        onTap: () {
+                          // if (postController.text.isNotEmpty) {
+                          //   context.read<HomeCubit>().createPost(
+                          //       widget.community, postController.text);
+                          //   postController.clear();
+                          // }
+                        },
+                        child: Image.asset('Img/send.png', height: 20)),
+                    controller: postController,
+                    hintText: 'Send a message',
+                    password: false,
+                  ),
+                ),
+              ],
+            );
           }
           return Container();
         },

@@ -78,8 +78,6 @@ class NetworkService {
   static Future<UserModel> verifyUser() async {
     await loadTokens();
 
-    print(accessToken);
-
     final response = await http.get(
       Uri.parse(getUser),
       headers: {
@@ -87,13 +85,7 @@ class NetworkService {
         'Authorization': 'Bearer $accessToken',
       },
     );
-
-    print(response.body);
-
     final data = jsonDecode(response.body);
-
-    print('This is the data: ${data['user']['_id']}');
-
     if (response.statusCode == 200) {
       final user = UserModel.fromMap(data['user']);
 

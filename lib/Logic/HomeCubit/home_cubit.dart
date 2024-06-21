@@ -84,11 +84,11 @@ class HomeCubit extends Cubit<HomeState> {
 
     final filteredCommunities =
         filterCommunitiesByInterests(dummyCommunities, userInterests);
-
+    late UserModel user;
     if (auth.state is AuthSuccess) {
-      final user = (auth.state as AuthSuccess).user;
-      emit(HomeLoaded(communities: filteredCommunities, user: user));
+      user = (auth.state as AuthSuccess).user;
     }
+    emit(HomeLoaded(communities: filteredCommunities, user: user));
   }
 
   createCommunity(
