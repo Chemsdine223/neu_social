@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
 
 import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Inputs/custom_input.dart';
+import 'package:neu_social/Widgets/Misc/chat_bubble.dart';
 
 class Room extends StatefulWidget {
   final String roomId;
@@ -26,9 +24,9 @@ class _RoomState extends State<Room> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          centerTitle: true,
-          title: BlocBuilder<WebSocketCubit, WebSocketState>(
-              builder: (context, state) {
+        centerTitle: true,
+        title: BlocBuilder<WebSocketCubit, WebSocketState>(
+          builder: (context, state) {
             if (state is WebSocketConnected) {
               final currentConversation = state.conversations
                   .where((element) => element.id == widget.roomId)
@@ -40,7 +38,9 @@ class _RoomState extends State<Room> {
               return Text("${user.firstname} ${user.lastname}");
             }
             return const Text('data');
-          })),
+          },
+        ),
+      ),
       body: BlocBuilder<WebSocketCubit, WebSocketState>(
         builder: (context, state) {
           if (state is WebSocketConnected) {
@@ -56,17 +56,15 @@ class _RoomState extends State<Room> {
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
-                      // print(message.status);
-                      if (message.status != 'read') {
-                        log(message.status);
-                        log(message.senderId);
+                      if (message.status == 'sent' &&
+                              message.senderId != NetworkService.id ||
+                          message.status == 'received' &&
+                              message.senderId != NetworkService.id) {
                         context.read<WebSocketCubit>().sendReadStatus(
-                            message.id, conversation.id, NetworkService.id);
+                            message.id, conversation.id, message.senderId);
                       }
-                      return ListTile(
-                        title: Text(message.content),
-                        trailing: Text(message.status),
-                      );
+
+                      return ChatBubble(message: message);
                     },
                   ),
                 ),
@@ -76,14 +74,20 @@ class _RoomState extends State<Room> {
                   ),
                   child: CustomTextField(
                     icon: InkWell(
-                        onTap: () {
-                          // if (postController.text.isNotEmpty) {
-                          //   context.read<HomeCubit>().createPost(
-                          //       widget.community, postController.text);
-                          //   postController.clear();
-                          // }
-                        },
-                        child: Image.asset('Img/send.png', height: 20)),
+                      onTap: () {
+                        context.read<WebSocketCubit>().sendMessage(
+                              postController.text,
+                              conversation.id,
+                              conversation.users
+                                  .where((element) =>
+                                      element.id != NetworkService.id)
+                                  .first
+                                  .id,
+                            );
+                        postController.clear();
+                      },
+                      child: Image.asset('Img/send.png', height: 20),
+                    ),
                     controller: postController,
                     hintText: 'Send a message',
                     password: false,

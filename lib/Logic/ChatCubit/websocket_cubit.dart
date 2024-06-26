@@ -1,12 +1,5 @@
-// import 'dart:convert';
-// import 'dart:developer';
-
-// import 'dart:developer';
-
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/conversation.dart';
@@ -14,6 +7,7 @@ import 'package:neu_social/Data/Models/message.dart';
 import 'package:neu_social/Data/Models/user.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
 import 'package:neu_social/Data/Network_service/network_data.dart';
+import 'package:neu_social/Utils/conversation/conversation_utils.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as manager;
 
@@ -25,7 +19,6 @@ class WebSocketInitial extends WebSocketState {}
 class WebSocketLoading extends WebSocketState {}
 
 class WebSocketConnected extends WebSocketState {
-  // final List<Message> messages;
   final List<Conversation> conversations;
 
   WebSocketConnected(this.conversations);
@@ -66,7 +59,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
         }));
   }
 
-  getConversations() async {
+  Future<void> getConversations() async {
     try {
       final conversations = await NetworkData().getConversations();
       initialConversations = conversations;
@@ -79,124 +72,63 @@ class WebSocketCubit extends Cubit<WebSocketState> {
   void messageStatus(
       String messageId, String status, String conversationId) async {
     if (state is WebSocketConnected) {
-      log('here I am ');
       final sstate = state as WebSocketConnected;
-
-      final existingIndex =
-          sstate.conversations.indexWhere((c) => c.id == conversationId);
-
-      if (existingIndex != -1) {
-        final conversation = sstate.conversations[existingIndex];
-        final messageIndex =
-            conversation.messages.indexWhere((m) => m.id == messageId);
-
-        if (messageIndex != -1) {
-          final updatedMessage =
-              conversation.messages[messageIndex].copyWith(status: status);
-
-          final updatedMessages = List<Message>.from(conversation.messages)
-            ..[messageIndex] = updatedMessage;
-
-          final updatedConversation =
-              conversation.copyWith(messages: updatedMessages);
-
-          final updatedConversations =
-              List<Conversation>.from(sstate.conversations)
-                ..[existingIndex] = updatedConversation;
-
-          emit(WebSocketConnected(updatedConversations));
-        }
-      }
+      final updatedConversations = updateMessageStatus(
+          sstate.conversations, conversationId, messageId, status);
+      emit(WebSocketConnected(updatedConversations));
     }
   }
 
   void processSentMessage(Message message) {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
+      final updatedConversations =
+          addMessageToConversation(sstate.conversations, message);
+      emit(WebSocketConnected(updatedConversations));
+    }
+  }
 
-      final conversationId = message.roomId;
-      final existingIndex =
-          sstate.conversations.indexWhere((c) => c.id == conversationId);
-      final existingConversation =
-          sstate.conversations.where((c) => c.id == conversationId).first;
+  void processSendingMessage(String roomId, String receiverId, String content) {
+    if (state is WebSocketConnected) {
+      final sstate = state as WebSocketConnected;
+      final message = Message(
+        id: "id",
+        senderId: NetworkService.id,
+        receiverId: receiverId,
+        roomId: roomId,
+        content: content,
+        status: "unsent",
+      );
+      final updatedConversations =
+          addMessageToConversation(sstate.conversations, message);
+      emit(WebSocketConnected(updatedConversations));
+    }
+  }
 
-      if (existingIndex != -1) {
-        sstate.conversations[existingIndex].messages.add(message);
-      } else {
-        sstate.conversations.add(Conversation(
-          id: conversationId,
-          messages: [message],
-          users: [existingConversation.users[0], existingConversation.users[1]],
-        ));
-      }
-
-      emit(WebSocketConnected(
-        List.from(
-          sstate.conversations,
-        ),
-      ));
+  void processSentReceipt(String messageId, String roomId) {
+    if (state is WebSocketConnected) {
+      final sstate = state as WebSocketConnected;
+      final updatedConversations =
+          updateAllMessagesToReceived(sstate.conversations, roomId);
+      emit(WebSocketConnected(updatedConversations));
     }
   }
 
   void processReceivedMessage(Message message) {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
-
-      final conversationId = message.roomId;
-      final existingIndex =
-          sstate.conversations.indexWhere((c) => c.id == conversationId);
-      final existingConversation =
-          sstate.conversations.where((c) => c.id == conversationId).first;
-
-      if (existingIndex != -1) {
-        sstate.conversations[existingIndex].messages.add(message);
-      } else {
-        sstate.conversations.add(Conversation(
-          id: conversationId,
-          messages: [message],
-          users: [existingConversation.users[0], existingConversation.users[1]],
-        ));
-      }
-
-      emit(WebSocketConnected(
-        List.from(
-          sstate.conversations,
-        ),
-      ));
+      final updatedConversations =
+          addMessageToConversation(sstate.conversations, message);
+      emit(WebSocketConnected(updatedConversations));
     }
   }
 
   void processReceivedAll(String conversationId) {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
-
-      // Find the index of the conversation
-      final existingIndex =
-          sstate.conversations.indexWhere((c) => c.id == conversationId);
-
-      if (existingIndex != -1) {
-        // Update the status of all messages in the conversation to "received" if they are not "read"
-        final updatedMessages =
-            sstate.conversations[existingIndex].messages.map((message) {
-          if (message.status != 'read') {
-            return message.copyWith(status: 'received');
-          }
-          return message;
-        }).toList();
-
-        // Create a new conversation with the updated messages
-        final updatedConversation = sstate.conversations[existingIndex]
-            .copyWith(messages: updatedMessages);
-
-        // Create a new list of conversations with the updated conversation
-        final updatedConversations = List.from(sstate.conversations)
-          ..[existingIndex] = updatedConversation;
-
-        // Emit the new state with the updated conversations
-        emit(WebSocketConnected(
-          List.from(updatedConversations),
-        ));
-      }
+      final updatedConversations =
+          updateAllMessagesToReceived(sstate.conversations, conversationId);
+      emit(WebSocketConnected(updatedConversations));
     }
   }
 
@@ -212,20 +144,25 @@ class WebSocketCubit extends Cubit<WebSocketState> {
         filteredUsers.addAll(usersInConversation);
       }
 
-      print(filteredUsers[0]);
-
       return filteredUsers;
     }
     return [];
   }
 
-  void sendMessage() {
-    socket.emit('message', {});
+  void sendMessage(String content, String roomId, String receiverId) {
+    socket.emit(
+        'message',
+        jsonEncode({
+          "content": content,
+          "senderId": NetworkService.id,
+          "receiverId": receiverId,
+          "roomId": roomId,
+        }));
+    processSendingMessage(roomId, receiverId, content);
   }
 
   void connectAndListen() async {
     await getConversations();
-
     await NetworkService.loadTokens();
 
     socket.io.options!['extraHeaders'] = {
@@ -244,7 +181,6 @@ class WebSocketCubit extends Cubit<WebSocketState> {
               .where((user) => user.id != NetworkService.id)
               .toList();
           for (var user in filteredUsers) {
-            print(user.id);
             socket.emit(
               'receivedAll',
               jsonEncode({
@@ -260,10 +196,8 @@ class WebSocketCubit extends Cubit<WebSocketState> {
 
     socket.on('message', (data) {
       final message = Message.fromMap(data['message']);
+      print('This is the message');
       processReceivedMessage(message);
-
-      // print(message.senderId);
-      // print(message.receiverId);
 
       socket.emit(
         'received',
@@ -282,12 +216,10 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     });
 
     socket.on('read', (data) {
-      print('read event: $data');
       messageStatus(data['messageId'], "read", data['roomId']);
     });
 
     socket.on('received', (data) {
-      print('receivedEvent event: $data');
       messageStatus(data['messageId'], "received", data['roomId']);
     });
 
@@ -296,7 +228,9 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       log(data.toString());
     });
 
-    socket.on('sent', (data) {});
+    socket.on('sent', (data) {
+      messageStatus(data['messageId'], 'sent', data['roomId']);
+    });
 
     socket.onDisconnect((_) {
       if (state is WebSocketConnected) {

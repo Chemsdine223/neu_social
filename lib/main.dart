@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neu_social/Constants/constants.dart';
 
 import 'package:neu_social/Data/OfflineService/storage_service.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
-          create: (context) => AuthCubit(),
+          create: (context) => authCubit,
         ),
         BlocProvider(
           create: (context) => BottomSheetNavigationCubit(),

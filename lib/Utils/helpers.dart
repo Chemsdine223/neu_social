@@ -69,3 +69,22 @@ String formatTimeOfDay(TimeOfDay timeOfDay, {bool is24HourFormat = true}) {
 
   return timeFormatter.format(dt);
 }
+
+Icon statusIcon(String status) {
+  switch (status) {
+    case 'sent':
+      return const Icon(Icons.check_outlined);
+    case 'unsent':
+      return const Icon(Icons.pending);
+    case 'received':
+      return const Icon(Icons.done_all_rounded);
+    case 'read':
+      return Icon(
+        Icons.done_all,
+        color: Colors.blue.shade700,
+      );
+
+    default:
+      return const Icon(Icons.pending);
+  }
+}

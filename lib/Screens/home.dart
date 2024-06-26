@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
-import 'package:neu_social/Data/Network_service/network_data.dart';
 import 'package:neu_social/Layouts/community_card_skeleton.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
 import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
@@ -28,17 +28,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => HomeCubit(BlocProvider.of<AuthCubit>(context)),
+          create: (context) => HomeCubit(authCubit),
         ),
       ],
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            NetworkService.verifyUser();
-            // context.read<WebSocketCubit>().getUsersExcludingCurrent();
-            // NetworkData().getConversations();
-          },
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     context.read<AuthCubit>().testingAuth();
+        //   },
+        // ),
         drawer: const CustomDrawer(),
         appBar: AppBar(
           scrolledUnderElevation: 0,
@@ -69,7 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     return count +
                                         conversation.messages
                                             .where((message) =>
-                                                message.status != 'read')
+                                                message.status != 'read' &&
+                                                message.senderId !=
+                                                    NetworkService.id)
                                             .length;
                                   });
                                 }
@@ -79,7 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     return count +
                                         conversation.messages
                                             .where((message) =>
-                                                message.status != 'read')
+                                                message.status != 'read' &&
+                                                message.senderId !=
+                                                    NetworkService.id)
                                             .length;
                                   });
                                 }
@@ -159,7 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            final homeCubitt = BlocProvider.of<HomeCubit>(context);
             if (state is HomeError) {
               return const Text('An error occured');
             }
@@ -187,28 +188,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: SlideAnimation(
                                 child: Builder(builder: (context) {
                               return CommunityCard(
-                                  community: community,
-                                  onTap: () {
-                                    community.type.toLowerCase() == 'paid' ||
-                                            !community.users
-                                                    .contains(state.user) &&
-                                                community.type.toLowerCase() ==
-                                                    'private'
-                                        ? errorSnackBar(context,
-                                            'Sorry, this is a //${community.type} community !')
-                                        : Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BlocProvider.value(
-                                                value: homeCubitt,
-                                                child: CommunityDetails(
-                                                  community: community,
-                                                ),
+                                community: community,
+                                onTap: () {
+                                  final homeCubit =
+                                      BlocProvider.of<HomeCubit>(context);
+                                  community.type.toLowerCase() == 'paid' ||
+                                          !community.users
+                                                  .contains(state.user) &&
+                                              community.type.toLowerCase() ==
+                                                  'private'
+                                      ? errorSnackBar(context,
+                                          'Sorry, this is a //${community.type} community !')
+                                      : Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BlocProvider.value(
+                                              value: homeCubit,
+                                              child: CommunityDetails(
+                                                community: community,
                                               ),
                                             ),
-                                          );
-                                  });
+                                          ),
+                                        );
+                                },
+                              );
                             })),
                           );
                         },

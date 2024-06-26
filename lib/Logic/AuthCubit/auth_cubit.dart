@@ -20,6 +20,12 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  testingAuth() async {
+    emit(AuthUserCheck());
+    await Future.delayed(const Duration(seconds: 2));
+    emit(Unauthorized());
+  }
+
   void signup(
     String firstname,
     String lastname,
@@ -32,7 +38,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final user = await NetworkService.register(
           firstname, lastname, email, dob, password);
-
 
       emit(AuthSuccess(user));
     } catch (e) {

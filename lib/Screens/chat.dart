@@ -30,10 +30,23 @@ class WebSocketScreen extends StatelessWidget {
                     ),
                   ),
                   leading: const CircleAvatar(),
-                  trailing: Text(state.conversations[index].messages
-                      .where((element) => element.status != "read")
-                      .length
-                      .toString()),
+                  trailing: state.conversations[index].messages
+                          .where((element) =>
+                              element.status != "read" &&
+                              element.senderId != NetworkService.id)
+                          .isEmpty
+                      ? null
+                      : CircleAvatar(
+                          radius: 8,
+                          child: Text(
+                            state.conversations[index].messages
+                                .where((element) =>
+                                    element.status != "read" &&
+                                    element.senderId != NetworkService.id)
+                                .length
+                                .toString(),
+                          ),
+                        ),
 
                   title: Text(
                     state.conversations[index].users

@@ -108,13 +108,15 @@ class NetworkService {
     final response = await http.post(
       Uri.parse(registerUser),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "password": password,
-        "firstname": firstName,
-        "lastname": lastName,
-        "email": email,
-        "dob": "2000-12-01",
-      }),
+      body: jsonEncode(
+        {
+          "password": password,
+          "firstname": firstName,
+          "lastname": lastName,
+          "email": email,
+          "dob": "2000-12-01",
+        },
+      ),
     );
 
     log(response.body);
