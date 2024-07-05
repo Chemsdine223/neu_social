@@ -22,6 +22,16 @@ class HomeCubit extends Cubit<HomeState> {
     getHomeData();
   }
 
+  @override
+  void emit(HomeState state) {
+    if (!isClosed) {
+      super.emit(state);
+    } else {
+      // Handle the case where the cubit is closed, e.g., log a message
+      print('Attempted to emit state on a closed Cubit');
+    }
+  }
+
   createEvent(Community community, String description, String time,
       DateTime date, String name, String location) async {
     final user = await StorageService().getUser();

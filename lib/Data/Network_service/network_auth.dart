@@ -12,43 +12,7 @@ class NetworkService {
   static String accessToken = '';
   static String refreshToken = '';
   static String id = '';
-
-  // Future<String> updatePassword(
-  //     String password1, String password2, String password3) async {
-  //   await loadTokens();
-  //   final res = await http.post(Uri.parse(changePassword),
-  //       headers: {"Authorization": "Bearer ${NetworkService.accessToken}"},
-  //       body: jsonEncode(
-  //         {"old_password": password1, "new_password": password2},
-  //       ));
-
-  //   final data = jsonDecode(res.body);
-  //   if (res.statusCode != 200) {
-  //     throw data['message'];
-  //   } else {
-  //     return data['message'];
-  //   }
-  // }
-
-  // Future<String> resetPassword(String phone, String newPassword) async {
-  //   final res = await http.post(Uri.parse(changePassword),
-  //       headers: {"Content-Type": "application/json"},
-  //       body: jsonEncode(
-  //         {
-  //           "mobile": phone,
-  //           "password": newPassword,
-  //         },
-  //       ));
-
-  //   final data = jsonDecode(res.body);
-
-  //   if (res.statusCode != 200) {
-  //     throw data['detail'];
-  //   } else {
-  //     return data['detail'];
-  //   }
-  // }
-
+ 
   static Future<UserModel> login(String email, String password) async {
     final response = await http.post(
       Uri.parse(loginUser),

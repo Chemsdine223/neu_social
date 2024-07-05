@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:neu_social/Data/Models/community.dart';
 import 'package:neu_social/Data/Models/event.dart';
 import 'package:neu_social/Data/Models/user.dart';
+import 'package:neu_social/Utils/size_config.dart';
 
 errorSnackBar(BuildContext context, String text) {
   if (context.mounted) {
@@ -53,38 +56,9 @@ List<Community> filterCommunitiesByInterests(
   }).toList();
 }
 
-String formatDateTime(DateTime dateTime, {String format = 'yyyy-MM-dd'}) {
-  final DateFormat formatter = DateFormat(format);
-
-  return formatter.format(dateTime);
-}
-
-String formatTimeOfDay(TimeOfDay timeOfDay, {bool is24HourFormat = true}) {
-  final now = DateTime.now();
-  final dt =
-      DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
-
-  final format = is24HourFormat ? 'HH:mm' : 'hh:mm a';
-  final timeFormatter = DateFormat(format);
-
-  return timeFormatter.format(dt);
-}
-
-Icon statusIcon(String status) {
-  switch (status) {
-    case 'sent':
-      return const Icon(Icons.check_outlined);
-    case 'unsent':
-      return const Icon(Icons.pending);
-    case 'received':
-      return const Icon(Icons.done_all_rounded);
-    case 'read':
-      return Icon(
-        Icons.done_all,
-        color: Colors.blue.shade700,
-      );
-
-    default:
-      return const Icon(Icons.pending);
-  }
+String generateRandomString(int length) {
+  const charset = 'abcdef0123456789';
+  Random random = Random();
+  return List.generate(
+      length, (index) => charset[random.nextInt(charset.length)]).join('');
 }

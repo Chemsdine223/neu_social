@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neu_social/Constants/constants.dart';
-
 import 'package:neu_social/Data/OfflineService/storage_service.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
-import 'package:neu_social/Logic/ChatCubit/websocket_cubit.dart';
+import 'package:neu_social/Logic/ChatCubit/chat_cubit.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
-
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
 import 'package:neu_social/Screens/home.dart';
-
 import 'package:neu_social/Screens/loading.dart';
 import 'package:neu_social/Screens/login.dart';
-
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Theme/theme_data.dart';
 import 'package:neu_social/Utils/size_config.dart';
@@ -36,7 +31,10 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
-          create: (context) => authCubit,
+          create: (context) => ChatCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AuthCubit(context.read<ChatCubit>()),
         ),
         BlocProvider(
           create: (context) => BottomSheetNavigationCubit(),
@@ -45,11 +43,7 @@ class MyApp extends StatelessWidget {
           create: (context) => ThemeCubit(),
         ),
         BlocProvider(
-          create: (context) => LogoutCubit(),
-        ),
-        BlocProvider(
-          // lazy: false,
-          create: (context) => WebSocketCubit(),
+          create: (context) => LogoutCubit(context.read<ChatCubit>()),
         ),
       ],
       child: BlocBuilder<ThemeCubit, AppTheme>(

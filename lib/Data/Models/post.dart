@@ -22,10 +22,10 @@ class Post {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'user': user.toMap()});
     result.addAll({'post': post});
-  
+
     return result;
   }
 
@@ -46,10 +46,8 @@ class Post {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
-    return other is Post &&
-      other.user == user &&
-      other.post == post;
+
+    return other is Post && other.user == user && other.post == post;
   }
 
   @override

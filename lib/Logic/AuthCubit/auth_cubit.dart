@@ -2,11 +2,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:neu_social/Data/Models/user.dart';
 import 'package:neu_social/Data/Network_service/network_auth.dart';
+import 'package:neu_social/Logic/ChatCubit/chat_cubit.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial()) {
+  ChatCubit chatCubit;
+  AuthCubit(this.chatCubit) : super(AuthInitial()) {
     verifyUser();
   }
 
@@ -15,6 +17,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final user = await NetworkService.verifyUser();
       emit(AuthSuccess(user));
+      chatCubit.connectAndListen();
     } catch (e) {
       emit(Unauthorized());
     }
@@ -50,6 +53,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final user = await NetworkService.login(email, password);
       emit(AuthSuccess(user));
+      chatCubit.connectAndListen();
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

@@ -7,6 +7,8 @@ class Message {
   final String roomId;
   final String content;
   final String status;
+  final String createdAt;
+  final String updatedAt;
   Message({
     required this.id,
     required this.senderId,
@@ -14,6 +16,8 @@ class Message {
     required this.roomId,
     required this.content,
     required this.status,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   Message copyWith({
@@ -23,6 +27,8 @@ class Message {
     String? roomId,
     String? content,
     String? status,
+    String? createdAt,
+    String? updatedAt,
   }) {
     return Message(
       id: id ?? this.id,
@@ -31,19 +37,23 @@ class Message {
       roomId: roomId ?? this.roomId,
       content: content ?? this.content,
       status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-
-    result.addAll({'id': id});
+  
+    result.addAll({'_id': id});
     result.addAll({'senderId': senderId});
     result.addAll({'receiverId': receiverId});
     result.addAll({'roomId': roomId});
     result.addAll({'content': content});
     result.addAll({'status': status});
-
+    result.addAll({'createdAt': createdAt});
+    result.addAll({'updatedAt': updatedAt});
+  
     return result;
   }
 
@@ -55,6 +65,8 @@ class Message {
       roomId: map['roomId'] ?? '',
       content: map['content'] ?? '',
       status: map['status'] ?? '',
+      createdAt: map['createdAt'] ?? '',
+      updatedAt: map['updatedAt'] ?? '',
     );
   }
 
@@ -65,29 +77,33 @@ class Message {
 
   @override
   String toString() {
-    return 'Message(id: $id, senderId: $senderId, receiverId: $receiverId, roomId: $roomId, content: $content, status: $status)';
+    return 'Message(id: $id, senderId: $senderId, receiverId: $receiverId, roomId: $roomId, content: $content, status: $status, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is Message &&
-        other.id == id &&
-        other.senderId == senderId &&
-        other.receiverId == receiverId &&
-        other.roomId == roomId &&
-        other.content == content &&
-        other.status == status;
+      other.id == id &&
+      other.senderId == senderId &&
+      other.receiverId == receiverId &&
+      other.roomId == roomId &&
+      other.content == content &&
+      other.status == status &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-        senderId.hashCode ^
-        receiverId.hashCode ^
-        roomId.hashCode ^
-        content.hashCode ^
-        status.hashCode;
+      senderId.hashCode ^
+      receiverId.hashCode ^
+      roomId.hashCode ^
+      content.hashCode ^
+      status.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

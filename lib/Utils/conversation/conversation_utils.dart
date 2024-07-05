@@ -81,3 +81,20 @@ List<Conversation> updateAllMessagesToReceived(
   }
   return conversations;
 }
+
+
+bool conversationExists(String senderId, String receiverId, List<Conversation> conversations) {
+  for (var conversation in conversations) {
+    bool senderInConversation = conversation.users.any((user) => user.id == senderId);
+    bool receiverInConversation = conversation.users.any((user) => user.id == receiverId);
+    if (senderInConversation && receiverInConversation) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+sortConversations() {
+  
+}

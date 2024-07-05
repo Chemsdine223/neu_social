@@ -42,6 +42,15 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     connectAndListen();
   }
 
+  @override
+  void emit(WebSocketState state) {
+    if (!isClosed) {
+      super.emit(state);
+    } else {
+      print('Attempted to emit state on a closed Cubit');
+    }
+  }
+
   Socket socket = manager.io(
     socketUrl,
     OptionBuilder().setTransports(['websocket']).build(),
@@ -74,7 +83,12 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
       final updatedConversations = updateMessageStatus(
-          sstate.conversations, conversationId, messageId, status);
+        sstate.conversations,
+        conversationId,
+        messageId,
+        status,
+      );
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -84,6 +98,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       final sstate = state as WebSocketConnected;
       final updatedConversations =
           addMessageToConversation(sstate.conversations, message);
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -98,9 +113,12 @@ class WebSocketCubit extends Cubit<WebSocketState> {
         roomId: roomId,
         content: content,
         status: "unsent",
+        createdAt: DateTime.now().toString(),
+        updatedAt: DateTime.now().toString(),
       );
       final updatedConversations =
           addMessageToConversation(sstate.conversations, message);
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -110,6 +128,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       final sstate = state as WebSocketConnected;
       final updatedConversations =
           updateAllMessagesToReceived(sstate.conversations, roomId);
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -119,6 +138,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       final sstate = state as WebSocketConnected;
       final updatedConversations =
           addMessageToConversation(sstate.conversations, message);
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -128,6 +148,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       final sstate = state as WebSocketConnected;
       final updatedConversations =
           updateAllMessagesToReceived(sstate.conversations, conversationId);
+      initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
   }
@@ -174,6 +195,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       ..connect();
 
     socket.onConnect((_) {
+      
       if (state is WebSocketConnected) {
         final currentState = state as WebSocketConnected;
         for (var conversation in currentState.conversations) {
