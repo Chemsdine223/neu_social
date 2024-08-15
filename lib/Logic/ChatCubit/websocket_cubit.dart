@@ -83,11 +83,7 @@ class WebSocketCubit extends Cubit<WebSocketState> {
     if (state is WebSocketConnected) {
       final sstate = state as WebSocketConnected;
       final updatedConversations = updateMessageStatus(
-        sstate.conversations,
-        conversationId,
-        messageId,
-        status,
-      );
+          sstate.conversations, conversationId, messageId, status, '', '');
       initialConversations = updatedConversations;
       emit(WebSocketConnected(updatedConversations));
     }
@@ -195,7 +191,6 @@ class WebSocketCubit extends Cubit<WebSocketState> {
       ..connect();
 
     socket.onConnect((_) {
-      
       if (state is WebSocketConnected) {
         final currentState = state as WebSocketConnected;
         for (var conversation in currentState.conversations) {

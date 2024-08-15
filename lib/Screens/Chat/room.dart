@@ -211,6 +211,13 @@ class _RoomState extends State<Room> {
                           smoothScrollToBottom(
                               scroll, getProportionateScreenHeight(60));
                         }
+
+                        print(postController.text);
+                        print(conversation.id);
+                        print(conversation.users
+                            .where((element) => element.id != NetworkService.id)
+                            .first
+                            .id);
                       },
                       child: Image.asset(
                         'Img/send.png',

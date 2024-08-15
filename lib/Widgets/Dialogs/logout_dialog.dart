@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
-import 'package:neu_social/Screens/login.dart';
+import 'package:neu_social/Screens/Auth/login.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 

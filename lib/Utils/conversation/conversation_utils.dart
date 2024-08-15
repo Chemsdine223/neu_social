@@ -2,6 +2,7 @@
 
 import 'package:neu_social/Data/Models/conversation.dart';
 import 'package:neu_social/Data/Models/message.dart';
+import 'package:neu_social/Data/Network_service/network_auth.dart';
 
 // Find conversation index by id
 int findConversationIndex(
@@ -20,8 +21,13 @@ Conversation? findConversation(
 }
 
 // Update message status in conversation
-List<Conversation> updateMessageStatus(List<Conversation> conversations,
-    String conversationId, String messageId, String status) {
+List<Conversation> updateMessageStatus(
+    List<Conversation> conversations,
+    String conversationId,
+    String messageId,
+    String status,
+    String createdAt,
+    String updatedAt) {
   final index = findConversationIndex(conversations, conversationId);
   if (index != -1) {
     final conversation = conversations[index];
@@ -30,8 +36,12 @@ List<Conversation> updateMessageStatus(List<Conversation> conversations,
         .indexWhere((m) => status == 'sent' ? m.id == 'id' : m.id == messageId);
 
     if (messageIndex != -1) {
-      final updatedMessage = conversation.messages[messageIndex]
-          .copyWith(status: status, id: messageId);
+      final updatedMessage = conversation.messages[messageIndex].copyWith(
+        status: status,
+        id: messageId,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+      );
       final updatedMessages = List<Message>.from(conversation.messages)
         ..[messageIndex] = updatedMessage;
       final updatedConversation =
@@ -52,11 +62,11 @@ List<Conversation> addMessageToConversation(
   if (index != -1) {
     conversations[index].messages.add(message);
   } else {
-    conversations.add(Conversation(
-      id: conversationId,
-      messages: [message],
-      users: [], // Assuming users are already managed elsewhere
-    ));
+    // conversations.add(Conversation(
+    //   id: conversationId,
+    //   messages: [message],
+    //   users: [], // Assuming users are already managed elsewhere
+    // ));
   }
   return List.from(conversations);
 }
@@ -67,7 +77,9 @@ List<Conversation> updateAllMessagesToReceived(
   final index = findConversationIndex(conversations, conversationId);
   if (index != -1) {
     final updatedMessages = conversations[index].messages.map((message) {
-      if (message.status != 'read') {
+      // print(message.senderId);
+      // print(NetworkService.id);
+      if (message.status != 'read' && message.senderId != NetworkService.id) {
         return message.copyWith(status: 'received');
       }
       return message;
@@ -82,11 +94,13 @@ List<Conversation> updateAllMessagesToReceived(
   return conversations;
 }
 
-
-bool conversationExists(String senderId, String receiverId, List<Conversation> conversations) {
+bool conversationExists(
+    String senderId, String receiverId, List<Conversation> conversations) {
   for (var conversation in conversations) {
-    bool senderInConversation = conversation.users.any((user) => user.id == senderId);
-    bool receiverInConversation = conversation.users.any((user) => user.id == receiverId);
+    bool senderInConversation =
+        conversation.users.any((user) => user.id == senderId);
+    bool receiverInConversation =
+        conversation.users.any((user) => user.id == receiverId);
     if (senderInConversation && receiverInConversation) {
       return true;
     }
@@ -94,7 +108,4 @@ bool conversationExists(String senderId, String receiverId, List<Conversation> c
   return false;
 }
 
-
-sortConversations() {
-  
-}
+sortConversations() {}

@@ -53,6 +53,7 @@ class _AddInterestsState extends State<AddInterests> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // const Text('data'),
               Text(
                 availableInterests.isEmpty
                     ? 'No available interests'

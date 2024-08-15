@@ -12,7 +12,7 @@ class NetworkService {
   static String accessToken = '';
   static String refreshToken = '';
   static String id = '';
- 
+
   static Future<UserModel> login(String email, String password) async {
     final response = await http.post(
       Uri.parse(loginUser),
@@ -25,12 +25,16 @@ class NetworkService {
       ),
     );
 
+    // print(response.statusCode);
+    // print(response.body);
+
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
       final user = UserModel.fromMap(data['user']);
 
       accessToken = data['access'];
+      id = data['user']['_id'];
 
       await saveTokens();
       return user;

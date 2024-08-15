@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/HomeCubit/home_cubit.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
-import 'package:neu_social/Screens/signup.dart';
+import 'package:neu_social/Screens/Auth/signup.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 import 'package:neu_social/Widgets/Misc/ovelay.dart';

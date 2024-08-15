@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
-import 'package:neu_social/Screens/home.dart';
-import 'package:neu_social/Utils/DateTime/date_utilities.dart';
+import 'package:neu_social/Screens/Home/home.dart';
 import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
-import 'package:neu_social/Widgets/Inputs/custom_input.dart';
+import 'package:neu_social/Widgets/Inputs/custom_textfield.dart';
 import 'package:neu_social/Widgets/Misc/ovelay.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupState extends State<Signup> {
+class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
-  String? birthDateInString;
-  // DateTime? birthDate;
-  DateTime? dob;
-
-  final firstnameController = TextEditingController();
-  final lastnameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final emailFocusNode = FocusNode();
+  final passwordFocusNode = FocusNode();
 
   @override
   void dispose() {
-    firstnameController.dispose();
-    lastnameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -66,7 +59,8 @@ class _SignupState extends State<Signup> {
               body: SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(18)),
+                    horizontal: getProportionateScreenWidth(18),
+                  ),
                   child: Form(
                     key: formKey,
                     child: SingleChildScrollView(
@@ -79,72 +73,60 @@ class _SignupState extends State<Signup> {
                           SizedBox(
                             width: getProportionateScreenWidth(180),
                             child: Text(
-                              'Create Account',
+                              'Login',
                               textAlign: TextAlign.start,
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
                                   .copyWith(
+                                    color: Theme.of(context).primaryColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                             ),
                           ),
-                          SizedBox(height: getProportionateScreenHeight(40)),
-                          CustomTextField(
-                            controller: firstnameController,
-                            hintText: 'Firstname',
-                            password: false,
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Firstname cannot be empty';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(8)),
-                          CustomTextField(
-                            controller: lastnameController,
-                            hintText: 'Lastname',
-                            password: false,
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Lastname cannot be empty';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(8)),
-                          _dateField(context),
-                          SizedBox(height: getProportionateScreenHeight(8)),
-                          CustomTextField(
-                            controller: emailController,
+
+                          // _dateField(context),
+                          SizedBox(height: getProportionateScreenHeight(48)),
+                          TextFieldCustom(
                             hintText: 'Email',
-                            password: false,
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: (value) {},
+                            controller: emailController,
+                            focusNode: emailFocusNode,
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null) {
                                 return 'E-mail cannot be empty';
                               } else if (!RegExp(
-                                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-                                  .hasMatch(value)) {
+                                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                              ).hasMatch(value)) {
                                 return 'Please enter a valid email address';
                               }
                               return null;
                             },
                           ),
+                          // CustomTextField(
+                          //   controller: emailController,
+                          //   hintText: 'Email',
+                          //   password: false,
+                          //   keyboardType: TextInputType.emailAddress,
+                          //   onChanged: (value) {},
+                          //   validator: (value) {
+                          //     if (value!.isEmpty) {
+                          //       return 'E-mail cannot be empty';
+                          //     } else if (!RegExp(
+                          //             r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                          //         .hasMatch(value)) {
+                          //       return 'Please enter a valid email address';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
                           SizedBox(height: getProportionateScreenHeight(8)),
-                          CustomTextField(
+                          TextFieldCustom(
                             controller: passwordController,
+                            focusNode: passwordFocusNode,
                             hintText: 'Password',
                             password: true,
-                            onChanged: (value) {},
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null) {
                                 return 'Password cannot be empty';
                               }
                               return null;
@@ -159,10 +141,7 @@ class _SignupState extends State<Signup> {
                                 child: CustomButton(
                                   onTap: () async {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<AuthCubit>().signup(
-                                            firstnameController.text,
-                                            lastnameController.text,
-                                            dob.toString(),
+                                      context.read<AuthCubit>().login(
                                             emailController.text,
                                             passwordController.text,
                                           );
@@ -172,13 +151,14 @@ class _SignupState extends State<Signup> {
                                   radius: 12,
                                   height: getProportionateScreenHeight(45),
                                   label: Text(
-                                    'Sign up',
+                                    'Login',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
                                         .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -195,38 +175,6 @@ class _SignupState extends State<Signup> {
           ],
         );
       },
-    );
-  }
-
-  TextFormField _dateField(BuildContext context) {
-    return TextFormField(
-      controller:
-          TextEditingController(text: dob != null ? formatDateTime(dob!) : ''),
-      readOnly: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Date of birth can't be empty";
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        hintText: 'dd-MM-yyyy',
-        suffixIcon: GestureDetector(
-          child: const Icon(Icons.calendar_today),
-          onTap: () async {
-            final datePick = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now());
-            if (datePick != null) {
-              setState(() {
-                dob = datePick;
-              });
-            }
-          },
-        ),
-      ),
     );
   }
 }

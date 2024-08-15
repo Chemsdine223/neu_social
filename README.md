@@ -9,5 +9,8 @@
 
 
 
+
 This project is implemented using local storage with SharedPreferences as per the requirements provided. There are no API integrations in the current version.
 If you have any questions or feedback, please feel free to reach out on my email Chemsdine223@gmail.com
+
+

@@ -16,7 +16,6 @@ class NetworkData {
         'Authorization': 'Bearer ${NetworkService.accessToken}',
       },
     );
-    // log(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['conversations'] as List<dynamic>;
       final conversations =

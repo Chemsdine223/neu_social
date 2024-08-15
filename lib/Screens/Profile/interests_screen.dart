@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/OfflineService/storage_service.dart';
-import 'package:neu_social/Screens/home.dart';
+import 'package:neu_social/Screens/Home/home.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 

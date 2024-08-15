@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "442616940451",
+    "project_id": "mychinguitty",
+    "storage_bucket": "mychinguitty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442616940451:android:ca2e98a641e1e1a762fc16",
+        "android_client_info": {
+          "package_name": "com.next.mychinguitty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXf0mejO-Ze-rU2vVv48j0AG-a_FiuP8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

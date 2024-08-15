@@ -1,9 +1,9 @@
-const String socketUrl = 'http://192.168.100.30:3000';
-const String baseUrl = 'http://192.168.100.30:3000/api';
-// const String baseUrl = 'http://172.20.10.5:3000/api';
-// const String socketUrl = 'http://172.20.10.5:3000';
-// const String baseUrl = 'http://192.168.0.115:3000/api';
-// const String socketUrl = 'http://192.168.0.115:3000';
+// const String socketUrl = 'http://192.168.100.30:3000';
+// const String baseUrl = 'http://192.168.100.30:3000/api';
+const String baseUrl = 'https://chat-server-dqsl.onrender.com/api';
+const String socketUrl = 'https://chat-server-dqsl.onrender.com';
+// const String baseUrl = 'http://192.168.1.217:3000/api';
+// const String socketUrl = 'http://192.168.1.217:3000';
 // const String baseUrl = 'http://192.168.1.212:3000/api';
 // const String socketUrl = 'http://192.168.1.212:3000';
 // 192.168.1.212

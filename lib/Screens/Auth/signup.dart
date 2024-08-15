@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
-import 'package:neu_social/Screens/home.dart';
+import 'package:neu_social/Screens/Home/home.dart';
+import 'package:neu_social/Utils/DateTime/date_utilities.dart';
 import 'package:neu_social/Utils/helpers.dart';
 import 'package:neu_social/Utils/size_config.dart';
 import 'package:neu_social/Widgets/Buttons/custom_button.dart';
 import 'package:neu_social/Widgets/Inputs/custom_input.dart';
 import 'package:neu_social/Widgets/Misc/ovelay.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupState extends State<Signup> {
   final formKey = GlobalKey<FormState>();
+  String? birthDateInString;
+  // DateTime? birthDate;
+  DateTime? dob;
+
+  final firstnameController = TextEditingController();
+  final lastnameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
+    firstnameController.dispose();
+    lastnameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -70,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                             width: getProportionateScreenWidth(180),
                             child: Text(
-                              'Login',
+                              'Create Account',
                               textAlign: TextAlign.start,
                               style: Theme.of(context)
                                   .textTheme
@@ -80,9 +89,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                             ),
                           ),
-
-                          // _dateField(context),
-                          SizedBox(height: getProportionateScreenHeight(48)),
+                          SizedBox(height: getProportionateScreenHeight(40)),
+                          CustomTextField(
+                            controller: firstnameController,
+                            hintText: 'Firstname',
+                            password: false,
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Firstname cannot be empty';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: getProportionateScreenHeight(8)),
+                          CustomTextField(
+                            controller: lastnameController,
+                            hintText: 'Lastname',
+                            password: false,
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Lastname cannot be empty';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: getProportionateScreenHeight(8)),
+                          _dateField(context),
+                          SizedBox(height: getProportionateScreenHeight(8)),
                           CustomTextField(
                             controller: emailController,
                             hintText: 'Email',
@@ -122,7 +159,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: CustomButton(
                                   onTap: () async {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<AuthCubit>().login(
+                                      context.read<AuthCubit>().signup(
+                                            firstnameController.text,
+                                            lastnameController.text,
+                                            dob.toString(),
                                             emailController.text,
                                             passwordController.text,
                                           );
@@ -132,14 +172,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   radius: 12,
                                   height: getProportionateScreenHeight(45),
                                   label: Text(
-                                    'Login',
+                                    'Sign up',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
                                         .copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
@@ -156,6 +195,38 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         );
       },
+    );
+  }
+
+  TextFormField _dateField(BuildContext context) {
+    return TextFormField(
+      controller:
+          TextEditingController(text: dob != null ? formatDateTime(dob!) : ''),
+      readOnly: true,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Date of birth can't be empty";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: 'dd-MM-yyyy',
+        suffixIcon: GestureDetector(
+          child: const Icon(Icons.calendar_today),
+          onTap: () async {
+            final datePick = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now());
+            if (datePick != null) {
+              setState(() {
+                dob = datePick;
+              });
+            }
+          },
+        ),
+      ),
     );
   }
 }

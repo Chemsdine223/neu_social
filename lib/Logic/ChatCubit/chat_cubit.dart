@@ -1,10 +1,6 @@
-// // import 'dart:io';
-
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:neu_social/Constants/constants.dart';
 import 'package:neu_social/Data/Models/conversation.dart';
 import 'package:neu_social/Data/Models/message.dart';
@@ -30,7 +26,7 @@ class ChatCubit extends Cubit<ChatState> {
     if (!isClosed) {
       super.emit(state);
     } else {
-      print('Attempted to emit state on a closed Cubit');
+      log('Attempted to emit state on a closed Cubit');
     }
   }
 
@@ -53,8 +49,6 @@ class ChatCubit extends Cubit<ChatState> {
     emit(ChatLoading());
     try {
       final conversations = await NetworkData().getConversations();
-
-      print(conversations);
       initialConversations = conversations;
       emit(Connected(conversations));
     } catch (e) {
@@ -63,7 +57,12 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void messageStatus(
-      String messageId, String status, String conversationId) async {
+    String messageId,
+    String status,
+    String conversationId,
+    String createdAt,
+    String updatedAt,
+  ) async {
     if (state is Connected) {
       final sstate = state as Connected;
       final updatedConversations = updateMessageStatus(
@@ -71,6 +70,8 @@ class ChatCubit extends Cubit<ChatState> {
         conversationId,
         messageId,
         status,
+        createdAt,
+        updatedAt,
       );
       initialConversations = updatedConversations;
       emit(Connected(updatedConversations));
@@ -121,51 +122,53 @@ class ChatCubit extends Cubit<ChatState> {
     if (state is Connected) {
       final newConversation = Conversation.fromMap(data['room']);
       final sstate = state as Connected;
-      final updatedConversations = List<Conversation>.from(sstate.conversations)
-        ..insert(0, newConversation);
-      initialConversations = updatedConversations;
-      emit(Connected(updatedConversations));
+
+      // Check if the conversation already exists
+      bool conversationExists = sstate.conversations
+          .any((conversation) => conversation.id == newConversation.id);
+
+      // If it doesn't exist, add it
+      if (!conversationExists) {
+        final updatedConversations =
+            List<Conversation>.from(sstate.conversations)
+              ..insert(0, newConversation);
+        initialConversations = updatedConversations;
+        emit(Connected(updatedConversations));
+      }
     }
   }
-
-  // void createRoom() {
-  //   if (state is Connected) {
-  //     final sstate = state as Connected;
-  //     final updatedConversations =
-  //   }
-  // }
 
   void createConversation(UserModel sender, UserModel receiver) {
     if (state is Connected) {
       if (conversationExists(
-          sender.id, receiver.id, (state as Connected).conversations)) {
+          NetworkService.id, receiver.id, (state as Connected).conversations)) {
         print(
             'Conversation already exists between ${sender.firstname} and ${receiver.firstname}');
         return;
-      }
-
-      socket.emit(
-        'createRoom',
-        jsonEncode(
-          {
-            "roomId": generateRandomString(24),
-            "receiver": {
-              "_id": receiver.id,
-              "email": receiver.email,
-              "dob": receiver.dob,
-              "firstname": receiver.firstname,
-              "lastname": receiver.lastname,
+      } else {
+        socket.emit(
+          'createRoom',
+          jsonEncode(
+            {
+              "roomId": generateRandomString(24),
+              "receiver": {
+                "_id": receiver.id,
+                "email": receiver.email,
+                "dob": receiver.dob,
+                "firstname": receiver.firstname,
+                "lastname": receiver.lastname,
+              },
+              "sender": {
+                "_id": sender.id,
+                "email": sender.email,
+                "dob": sender.dob,
+                "firstname": sender.firstname,
+                "lastname": sender.lastname,
+              }
             },
-            "sender": {
-              "_id": sender.id,
-              "email": sender.email,
-              "dob": sender.dob,
-              "firstname": sender.firstname,
-              "lastname": sender.lastname,
-            }
-          },
-        ),
-      );
+          ),
+        );
+      }
     }
   }
 
@@ -212,6 +215,9 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void sendMessage(String content, String roomId, String receiverId) {
+    // print('roomId $roomId');
+    // print('roomId $receiverId');
+    // print('roomId $content');
     socket.emit(
         'message',
         jsonEncode({
@@ -224,10 +230,10 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void connectAndListen() async {
-    await getConversations();
     await NetworkService.loadTokens();
+    await getConversations();
 
-    print(NetworkService.id);
+    log('This is the id: ${NetworkService.id}');
 
     socket.io.options!['extraHeaders'] = {
       "id": NetworkService.id,
@@ -238,24 +244,31 @@ class ChatCubit extends Cubit<ChatState> {
       ..connect();
 
     socket.onConnect((_) {
+      emit(Connected(initialConversations));
       if (state is Connected) {
         final currentState = state as Connected;
-        for (var conversation in currentState.conversations) {
-          final filteredUsers = conversation.users
-              .where((user) => user.id != NetworkService.id)
-              .toList();
-          for (var user in filteredUsers) {
-            socket.emit(
-              'receivedAll',
-              jsonEncode({
-                "roomId": conversation.id,
-                "receiverId": user.id,
-              }),
-            );
+
+        if (currentState.conversations.isNotEmpty) {
+          for (var conversation in currentState.conversations) {
+            final filteredUsers = conversation.users
+                .where((user) => user.id != NetworkService.id)
+                .toList();
+            for (var user in filteredUsers) {
+              // ? The problem with the recieved all was the incompatibility
+              // ? Of the user id and the sender id being a string and the
+              // ? other an objectID
+              log('received all sending to ${user.id}');
+              socket.emit(
+                'receivedAll',
+                jsonEncode({
+                  "roomId": conversation.id,
+                  "receiverId": user.id,
+                }),
+              );
+            }
           }
         }
       }
-      emit(Connected(initialConversations));
     });
 
     socket.on('message', (data) {
@@ -288,11 +301,13 @@ class ChatCubit extends Cubit<ChatState> {
     });
 
     socket.on('read', (data) {
-      messageStatus(data['messageId'], "read", data['roomId']);
+      messageStatus(data['messageId'], "read", data['roomId'],
+          data['createdAt'], data['updatedAt']);
     });
 
     socket.on('received', (data) {
-      messageStatus(data['messageId'], "received", data['roomId']);
+      messageStatus(data['messageId'], "received", data['roomId'],
+          data['createdAt'], data['updatedAt']);
     });
 
     socket.onAny((event, data) {
@@ -301,7 +316,9 @@ class ChatCubit extends Cubit<ChatState> {
     });
 
     socket.on('sent', (data) {
-      messageStatus(data['messageId'], 'sent', data['roomId']);
+      log('Sentdata: $data');
+      messageStatus(data['messageId'], 'sent', data['roomId'],
+          data['createdAt'], data['updatedAt']);
     });
 
     socket.onDisconnect((_) {

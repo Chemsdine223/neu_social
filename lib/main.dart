@@ -5,9 +5,9 @@ import 'package:neu_social/Logic/AuthCubit/auth_cubit.dart';
 import 'package:neu_social/Logic/ChatCubit/chat_cubit.dart';
 import 'package:neu_social/Logic/LogoutCubit/logout_cubit.dart';
 import 'package:neu_social/Logic/NavigationCubit/navigation_cubit.dart';
-import 'package:neu_social/Screens/home.dart';
-import 'package:neu_social/Screens/loading.dart';
-import 'package:neu_social/Screens/login.dart';
+import 'package:neu_social/Screens/Home/home.dart';
+import 'package:neu_social/Widgets/Misc/loading.dart';
+import 'package:neu_social/Screens/Auth/login.dart';
 import 'package:neu_social/Theme/theme_cubit.dart';
 import 'package:neu_social/Theme/theme_data.dart';
 import 'package:neu_social/Utils/size_config.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          lazy: false,
+          // lazy: false,
           create: (context) => ChatCubit(),
         ),
         BlocProvider(
